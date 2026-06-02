@@ -55,10 +55,10 @@
     --panel-qty-fg: #FFB347; --panel-empty: rgba(255,225,190,0.4);
   }
   body[data-panel="terracota"] {
-    --panel-bg: rgba(122,36,24,0.95); --panel-text: #FFFFFF; --panel-muted: rgba(255,220,210,0.9);
-    --panel-line: rgba(255,200,180,0.2); --panel-surface: rgba(92,24,16,0.5);
-    --panel-total: #FFD580; --panel-qty-bg: rgba(255,255,255,0.12); --panel-qty-border: rgba(255,210,190,0.35);
-    --panel-qty-fg: #FFD580; --panel-empty: rgba(255,220,210,0.45);
+    --panel-bg: #7a2418; --panel-text: #FFFFFF; --panel-muted: rgba(255,220,210,0.95);
+    --panel-line: rgba(255,180,160,0.3); --panel-surface: rgba(92,24,16,0.8);
+    --panel-total: #FFD580; --panel-qty-bg: rgba(255,255,255,0.2); --panel-qty-border: rgba(255,210,190,0.5);
+    --panel-qty-fg: #FFFFFF; --panel-empty: rgba(255,220,210,0.6);
   }
 
   /* warm blurred backdrop so the glass has something to refract */
@@ -321,13 +321,14 @@
   .line:last-child { border-bottom: none; }
   @keyframes slideInRight { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
 
-  .qty { display: flex; align-items: center; gap: 3px; }
+  .qty { display: flex; align-items: center; gap: 6px; }
   .qty button {
-    width: 26px; height: 26px; border-radius: 50%; background: var(--panel-qty-bg); border: 1px solid var(--panel-qty-border);
-    color: var(--panel-qty-fg); font-size: 15px; font-weight: 700; cursor: pointer; display: grid; place-items: center; line-height: 1; transition: all .15s;
+    width: 34px; height: 34px; border-radius: 50%; background: var(--panel-qty-bg); border: 1px solid var(--panel-qty-border);
+    color: var(--panel-qty-fg); font-size: 18px; font-weight: 700; cursor: pointer; display: grid; place-items: center; line-height: 1; transition: all .15s;
+    -webkit-tap-highlight-color: transparent; touch-action: manipulation;
   }
-  .qty button:hover { background: var(--red); border-color: var(--red); color: #fff; }
-  .qty .n { font-family: 'Fraunces', serif; min-width: 20px; text-align: center; font-weight: 700; font-size: 15px; color: var(--panel-text); }
+  .qty button:active { background: var(--red); border-color: var(--red); color: #fff; transform: scale(0.92); }
+  .qty .n { font-family: 'Fraunces', serif; min-width: 22px; text-align: center; font-weight: 700; font-size: 16px; color: var(--panel-text); }
 
   .line-info { min-width: 0; }
   .line-info .nm { font-size: 13px; font-weight: 600; color: var(--panel-text); line-height: 1.2; }
@@ -335,12 +336,12 @@
   .line-total { font-family: 'Fraunces', serif; font-weight: 700; font-size: 14px; color: var(--panel-total); white-space: nowrap; }
   .line-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; min-width: 60px; }
   .del-btn { 
-    background: rgba(214,48,49,0.12); border: 1px solid rgba(214,48,49,0.3); 
-    border-radius: 8px; cursor: pointer; font-size: 12px; color: var(--red); 
-    opacity: .9; padding: 4px 8px; line-height: 1; transition: all .15s;
-    font-weight: 700; font-family: inherit; white-space: nowrap;
+    background: rgba(255,100,80,0.2); border: 1px solid rgba(255,150,130,0.5); 
+    border-radius: 8px; cursor: pointer; font-size: 12px; color: #ffb3a0; 
+    padding: 5px 10px; line-height: 1; font-weight: 700; font-family: inherit; white-space: nowrap;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   }
-  .del-btn:hover { opacity: 1; background: var(--red); color: #fff; }
+  .del-btn:active { background: rgba(255,80,50,0.5); }
   .del-btn:hover { opacity: 1; }
   .addr-wrap { margin: 12px 0 8px; }
   .addr-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-bottom: 6px; }
@@ -379,9 +380,10 @@
 
   .wa-btn {
     width: 100%; margin-top: 14px; font-family: inherit; font-size: 15px; font-weight: 700; color: #fff;
-    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); border: none; border-radius: 14px; padding: 15px 20px;
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); border: none; border-radius: 14px; padding: 16px 20px;
     cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
     box-shadow: 0 6px 20px rgba(37,211,102,0.35); transition: all .2s;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   }
   .wa-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(37,211,102,0.5); }
   .wa-btn:disabled { opacity: .4; cursor: default; box-shadow: none; }
@@ -987,7 +989,7 @@
     msg += `*TOTAL ............ ${BRL(total)}*\n`;
     msg += '----------------------------\n\n';
     msg += '_Aguardo confirmacao, obrigado!_';
-    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+    window.location.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
   };
 
   // ============ SEARCH ============
