@@ -398,39 +398,178 @@
   .sheet-backdrop { display: none; }
   .sheet-grip { display: none; }
   .sheet-close { display: none; }
+  .cart-screen { display: none; }
 
   @media (max-width: 768px) {
-    /* Stack main + order vertically, like desktop but in a column */
+    /* App layout */
     .app { grid-template-columns: 1fr; height: auto; }
     .main { height: auto; overflow: visible; }
-    .main-inner { padding: 0 16px 24px; }
-    .toolbar { top: 88px; padding: 10px 16px; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+    .main-inner { padding: 0 16px 100px; }
+    .toolbar { top: 68px; padding: 10px 16px; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
     .toolbar::-webkit-scrollbar { display: none; }
 
-    /* Order panel — static block below main content */
-    .order {
-      position: static !important;
-      transform: none !important;
-      height: auto !important;
-      max-height: none !important;
-      width: 100% !important;
-      border-radius: 0 !important;
-      border-left: none !important;
-      border-top: 2px solid var(--panel-line);
-      overflow: visible !important;
-      backdrop-filter: none; -webkit-backdrop-filter: none;
-    }
-    .order-list {
-      overflow-y: visible !important;
-      height: auto !important;
-      max-height: none !important;
-      flex: none !important;
-      padding: 8px 20px;
-    }
-    .order-foot { padding: 16px 20px 24px; }
-    .bumps { padding: 4px 20px 14px; }
+    /* Hide desktop order panel */
+    .order { display: none !important; }
 
-    /* Cards */
+    /* ── BOTTOM BAR ── */
+    .mobile-bar {
+      display: flex;
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 100;
+      background: #fff;
+      border-top: 1px solid #f0e8e0;
+      padding: 10px 16px;
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
+      align-items: center; gap: 14px;
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.10);
+    }
+    .mobile-bar .mb-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+    .mobile-bar .mb-bag {
+      width: 42px; height: 42px; border-radius: 12px;
+      background: var(--red); display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; position: relative;
+    }
+    .mobile-bar .mb-bag svg { width: 20px; height: 20px; fill: #fff; }
+    .mobile-bar .mb-badge {
+      position: absolute; top: -6px; right: -6px;
+      min-width: 20px; height: 20px; padding: 0 5px;
+      background: #ff6b00; color: #fff; border-radius: 99px;
+      font-size: 11px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid #fff;
+    }
+    .mobile-bar .mb-texts { min-width: 0; }
+    .mobile-bar .mb-count { font-size: 12px; color: #888; white-space: nowrap; }
+    .mobile-bar .mb-total { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 800; color: #222; line-height: 1.1; }
+    .mobile-bar .mb-go {
+      background: var(--red); color: #fff;
+      font-family: inherit; font-weight: 700; font-size: 14px;
+      border: none; border-radius: 12px;
+      padding: 13px 20px;
+      cursor: pointer; white-space: nowrap;
+      touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+
+    /* ── CART SCREEN (full screen like iFood) ── */
+    .cart-screen {
+      display: flex;
+      flex-direction: column;
+      position: fixed; inset: 0; z-index: 200;
+      background: #f5f0eb;
+      transform: translateX(100%);
+      transition: transform .28s cubic-bezier(.4,0,.2,1);
+      overflow: hidden;
+    }
+    .cart-screen.open { transform: translateX(0); }
+
+    .cs-header {
+      background: #fff;
+      padding: 14px 16px 12px;
+      padding-top: max(14px, env(safe-area-inset-top));
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid #f0e8e0;
+      flex-shrink: 0;
+    }
+    .cs-back {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #f5f0eb; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+    .cs-back svg { width: 20px; height: 20px; fill: none; stroke: #333; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .cs-header h2 { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 800; color: #1a1a1a; flex: 1; }
+    .cs-header .cs-badge { background: var(--red); color: #fff; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 99px; }
+
+    .cs-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 16px; }
+
+    /* Items card */
+    .cs-card { background: #fff; border-radius: 16px; padding: 4px 0; margin-bottom: 12px; }
+    .cs-line {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px; border-bottom: 1px solid #f5f0eb;
+    }
+    .cs-line:last-child { border-bottom: none; }
+    .cs-qty { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .cs-qty button {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 1.5px solid var(--red); background: #fff;
+      color: var(--red); font-size: 18px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    }
+    .cs-qty button.inc { background: var(--red); color: #fff; }
+    .cs-qty .cs-n { font-family: 'Fraunces', serif; font-weight: 800; font-size: 16px; color: #1a1a1a; min-width: 20px; text-align: center; }
+    .cs-name { flex: 1; min-width: 0; }
+    .cs-name .nm { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+    .cs-name .un { font-size: 12px; color: #888; margin-top: 2px; }
+    .cs-price { font-family: 'Fraunces', serif; font-weight: 700; font-size: 15px; color: #1a1a1a; white-space: nowrap; text-align: right; }
+    .cs-del { background: none; border: none; cursor: pointer; padding: 6px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+    .cs-del svg { width: 18px; height: 18px; fill: none; stroke: #bbb; stroke-width: 2; }
+    .cs-del:active svg { stroke: var(--red); }
+
+    /* Bumps */
+    .cs-bumps-title { font-size: 13px; font-weight: 700; color: #555; margin: 16px 0 10px; padding: 0 4px; }
+    .cs-bump-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+    .cs-bump-row::-webkit-scrollbar { display: none; }
+    .cs-bump-card {
+      flex-shrink: 0; width: 120px; background: #fff; border-radius: 14px;
+      overflow: hidden; border: 1px solid #f0e8e0;
+    }
+    .cs-bump-img { height: 72px; display: grid; place-items: center; font-size: 30px; background: #faf5f0; position: relative; overflow: hidden; }
+    .cs-bump-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .cs-bump-info { padding: 8px 10px 10px; }
+    .cs-bump-name { font-size: 12px; font-weight: 600; color: #1a1a1a; line-height: 1.2; }
+    .cs-bump-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+    .cs-bump-price { font-family: 'Fraunces', serif; font-size: 13px; font-weight: 700; color: var(--red); }
+    .cs-bump-add {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--red); color: #fff; border: none;
+      font-size: 16px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Summary card */
+    .cs-summary { background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+    .cs-srow { display: flex; justify-content: space-between; font-size: 14px; color: #666; margin-bottom: 10px; }
+    .cs-srow.total { margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e0d8d0; color: #1a1a1a; font-weight: 700; font-size: 15px; margin-bottom: 0; }
+    .cs-srow.total .tv { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 800; color: var(--red); }
+
+    /* Address */
+    .cs-addr { background: #fff; border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; }
+    .cs-addr label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #888; display: block; margin-bottom: 8px; }
+    .cs-addr input {
+      width: 100%; font-family: inherit; font-size: 14px; color: #1a1a1a;
+      border: 1.5px solid #e0d8d0; border-radius: 10px;
+      padding: 11px 14px; outline: none;
+      background: #faf5f0;
+    }
+    .cs-addr input:focus { border-color: var(--red); }
+
+    /* Footer */
+    .cs-footer {
+      background: #fff; padding: 12px 16px;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+      border-top: 1px solid #f0e8e0; flex-shrink: 0;
+    }
+    .cs-wa-btn {
+      width: 100%; font-family: inherit; font-size: 15px; font-weight: 700; color: #fff;
+      background: #25D366; border: none; border-radius: 14px;
+      padding: 15px 20px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    }
+    .cs-wa-btn svg { width: 22px; height: 22px; fill: #fff; }
+    .cs-wa-btn:disabled { opacity: .4; }
+    .cs-clear { display: block; width: 100%; text-align: center; margin-top: 10px; font-size: 13px; color: #aaa; background: none; border: none; cursor: pointer; font-family: inherit; touch-action: manipulation; }
+
+    /* Empty state */
+    .cs-empty { text-align: center; padding: 60px 20px; }
+    .cs-empty .ic { font-size: 56px; opacity: .3; margin-bottom: 12px; }
+    .cs-empty .t1 { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: #555; }
+    .cs-empty .t2 { font-size: 13px; color: #aaa; margin-top: 6px; }
+
+    /* Cards grid */
     .grid { grid-template-columns: 1fr 1fr; gap: 10px; }
     .card-img { height: 110px; }
     .card-body { padding: 10px 12px 0; }
@@ -439,23 +578,18 @@
     .price { font-size: 16px; }
     .add-btn { width: 34px; height: 34px; font-size: 20px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
     .card { touch-action: manipulation; }
-
-    /* Header */
+    .card:active { opacity: .85; }
+    .promo-card { min-width: min(280px, 82vw); }
     .header { padding: 12px 16px; gap: 10px; }
     .brand h1 { font-size: 17px; }
     .open-badge { font-size: 11px; padding: 6px 10px; }
-
-    /* Hero */
     .hero { padding: 16px 16px 14px; min-height: 160px; }
     .hero .ht h2 { font-size: clamp(1.25rem, 5.5vw, 1.8rem); }
     .hero p { font-size: 12.5px; }
-
-    /* Promos */
-    .promo-card { min-width: min(280px, 82vw); }
   }
 
   @media (max-width: 460px) {
-    .main-inner { padding: 0 12px 24px; }
+    .main-inner { padding: 0 12px 100px; }
     .header { padding: 10px 12px; }
     .toolbar { margin: 10px -12px 0; padding: 8px 12px; }
     .grid { gap: 8px; }
@@ -463,8 +597,7 @@
     .card-body h3 { font-size: 13px; }
     .price { font-size: 15px; }
     .brand h1 { font-size: 15px; }
-    .hero { padding: 14px 12px; min-height: 150px; }
-    .hero .ht h2 { font-size: clamp(1.1rem, 6vw, 1.5rem); }
+    .hero { padding: 14px 12px; }
     .promo-card { min-width: min(240px, 86vw); }
   }
 
@@ -596,21 +729,41 @@
     </aside>
   </div>
 
-  <!-- mobile -->
-  <div class="sheet-backdrop" id="backdrop"></div>
-  <div class="mobile-bar" id="mobileBar" style="display:none;">
-    <span class="mb-ic">🛒</span>
-    <div class="mb-info">
-      <div class="mb-count" id="mbCount">Nenhum item</div>
-      <div class="mb-total" id="mbTotal">R$ 0,00</div>
+  <!-- MOBILE CART SCREEN (iFood style) -->
+  <div class="cart-screen" id="cartScreen">
+    <div class="cs-header">
+      <button class="cs-back" id="csBack">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <h2>Seu Pedido</h2>
+      <span class="cs-badge" id="csBadge">0</span>
     </div>
-    <button class="mb-go" id="mbGo">
-      <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16 .5C7.4.5.5 7.4.5 16c0 2.8.7 5.4 2 7.7L.5 31.5l8-2.1c2.2 1.2 4.8 1.9 7.5 1.9 8.6 0 15.5-6.9 15.5-15.5S24.6.5 16 .5z"/></svg>
-      Ver pedido
-    </button>
+    <div class="cs-body" id="csBody"></div>
+    <div class="cs-footer">
+      <button class="cs-wa-btn" id="csWaBtn" disabled>
+        <svg viewBox="0 0 32 32" fill="#fff"><path d="M16 .5C7.4.5.5 7.4.5 16c0 2.8.7 5.4 2 7.7L.5 31.5l8-2.1c2.2 1.2 4.8 1.9 7.5 1.9 8.6 0 15.5-6.9 15.5-15.5S24.6.5 16 .5zm0 28.2c-2.5 0-4.8-.7-6.8-1.8l-.5-.3-4.7 1.2 1.3-4.6-.3-.5A12.5 12.5 0 1 1 28.5 16 12.5 12.5 0 0 1 16 28.7zm7-9.3c-.4-.2-2.3-1.1-2.6-1.3s-.6-.2-.9.2-1 1.3-1.2 1.5-.4.3-.8.1a10.2 10.2 0 0 1-3-1.9 11.4 11.4 0 0 1-2.1-2.6c-.2-.4 0-.6.2-.8l.6-.7c.2-.2.2-.4.4-.6s0-.5 0-.7-.9-2.2-1.3-3-.6-.6-.9-.6h-.7a1.4 1.4 0 0 0-1 .5 4.2 4.2 0 0 0-1.3 3.1c0 1.9 1.3 3.6 1.5 3.9s2.7 4.1 6.5 5.7c3.2 1.4 3.9 1.1 4.6 1.1a3.8 3.8 0 0 0 2.5-1.8 3.1 3.1 0 0 0 .2-1.8c-.1-.2-.4-.3-.8-.5z"/></svg>
+        Enviar Pedido pelo WhatsApp
+      </button>
+      <button class="cs-clear" id="csClear">Limpar pedido</button>
+    </div>
   </div>
 
-  <!-- Tweaks -->
+  <!-- MOBILE BOTTOM BAR -->
+  <div class="mobile-bar" id="mobileBar" style="display:none">
+    <div class="mb-left">
+      <div class="mb-bag">
+        <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="mb-badge" id="mbBadge">0</span>
+      </div>
+      <div class="mb-texts">
+        <div class="mb-count" id="mbCount">0 itens</div>
+        <div class="mb-total" id="mbTotal">R$ 0,00</div>
+      </div>
+    </div>
+    <button class="mb-go" id="mbGo">Ver pedido</button>
+  </div>
+
+  <!-- React + Babel for the Tweaks panel -->
   <div id="tweaks" hidden>
     <div class="twk-hd" id="twkHd"><b>Tweaks</b><button class="twk-x" id="twkX" aria-label="Fechar">✕</button></div>
     <div class="twk-sect">Fundo do cardápio</div>
@@ -813,21 +966,40 @@
   function decItem(id) { if (!cart[id]) return; cart[id]--; if (cart[id] <= 0) delete cart[id]; renderCart(); }
   function clearCart() { for (const k in cart) delete cart[k]; renderCart(); }
 
+  // Desktop elements
   const orderList = document.getElementById('orderList');
   const badge = document.getElementById('badge');
   const subtotalEl = document.getElementById('subtotal');
   const totalEl = document.getElementById('total');
   const waBtn = document.getElementById('waBtn');
   const clearBtn = document.getElementById('clearBtn');
-  const mobileBar = document.getElementById('mobileBar');
-  const mbCount = document.getElementById('mbCount');
-  const mbTotal = document.getElementById('mbTotal');
   const bumpsEl = document.getElementById('bumps');
   const bumpRow = document.getElementById('bumpRow');
 
+  // Mobile elements
+  const mobileBar = document.getElementById('mobileBar');
+  const mbCount = document.getElementById('mbCount');
+  const mbTotal = document.getElementById('mbTotal');
+  const mbBadge = document.getElementById('mbBadge');
+  const mbGo = document.getElementById('mbGo');
+  const cartScreen = document.getElementById('cartScreen');
+  const csBody = document.getElementById('csBody');
+  const csBadge = document.getElementById('csBadge');
+  const csWaBtn = document.getElementById('csWaBtn');
+  const csClear = document.getElementById('csClear');
+  const csBack = document.getElementById('csBack');
+
+  const isMobile = () => window.innerWidth <= 768;
   const entries = () => Object.keys(cart).map(id => ({ item: byId(id), qty: cart[id] }));
   const totalQty = () => Object.values(cart).reduce((a, b) => a + b, 0);
 
+  // Open/close cart screen (mobile)
+  function openCart() { cartScreen.classList.add('open'); document.body.style.overflow = 'hidden'; renderCartScreen(); }
+  function closeCart() { cartScreen.classList.remove('open'); document.body.style.overflow = ''; }
+  mbGo.addEventListener('click', openCart);
+  csBack.addEventListener('click', closeCart);
+
+  // ── DESKTOP: render bumps ──
   function renderBumps() {
     if (!totalQty()) { bumpsEl.style.display = 'none'; return; }
     const suggestions = BUMP_IDS.map(byId).filter(it => it && !cart[it.id]);
@@ -839,18 +1011,121 @@
       c.className = 'bump-card';
       const ph = it.img ? `<img src="${it.img}" alt="${it.name}" onerror="this.remove()" />` : '';
       c.innerHTML = `<div class="bimg">${it.emoji}${ph}</div><div class="binfo"><div class="bn">${it.name}</div><div class="bp"><span class="bprice">${BRL(it.price)}</span><button class="badd" type="button">+</button></div></div>`;
-      c.querySelector('.badd').addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); addItem(it.id); }, { passive: false });
-      c.querySelector('.badd').addEventListener('click', (e) => { e.stopPropagation(); addItem(it.id); });
+      c.querySelector('.badd').addEventListener('click', e => { e.stopPropagation(); addItem(it.id); });
       c.addEventListener('click', () => addItem(it.id));
       bumpRow.appendChild(c);
     });
   }
 
-  function renderCart() {
-    const list = entries();
-    const qty = totalQty();
+  // ── DESKTOP: render cart panel ──
+  function renderDesktopCart() {
+    const list = entries(), qty = totalQty();
+    orderList.innerHTML = '';
+    if (!list.length) {
+      orderList.innerHTML = '<div class="order-empty"><div class="ic">🍕</div><div class="t1">Seu carrinho está vazio</div><div class="t2">Escolha os itens deliciosos do cardápio</div></div>';
+      badge.style.display = 'none';
+      waBtn.disabled = true; clearBtn.style.display = 'none';
+    } else {
+      list.forEach(({ item, qty: q }) => {
+        const line = document.createElement('div');
+        line.className = 'line';
+        line.innerHTML = `<div class="qty"><button class="dec" type="button">−</button><span class="n">${q}</span><button class="inc" type="button">+</button></div><div class="line-info"><div class="nm">${item.name}</div><div class="unit">${BRL(item.price)} cada</div></div><div class="line-right"><div class="line-total">${BRL(item.price * q)}</div><button class="del-btn" type="button">remover</button></div>`;
+        line.querySelector('.dec').addEventListener('click', e => { e.stopPropagation(); decItem(item.id); });
+        line.querySelector('.inc').addEventListener('click', e => { e.stopPropagation(); addItem(item.id); });
+        line.querySelector('.del-btn').addEventListener('click', e => { e.stopPropagation(); delete cart[item.id]; renderCart(); });
+        orderList.appendChild(line);
+      });
+      badge.style.display = 'inline-flex'; badge.textContent = qty;
+      waBtn.disabled = false; clearBtn.style.display = 'block';
+    }
+    renderBumps();
+    const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
+    const total = list.length ? subtotal + DELIVERY : DELIVERY;
+    subtotalEl.textContent = BRL(subtotal);
+    totalEl.textContent = BRL(total);
+  }
 
-    // Update card badges
+  // ── MOBILE: render cart screen ──
+  function renderCartScreen() {
+    const list = entries(), qty = totalQty();
+    csBadge.textContent = qty;
+    csBody.innerHTML = '';
+
+    if (!list.length) {
+      csBody.innerHTML = '<div class="cs-empty"><div class="ic">🍕</div><div class="t1">Carrinho vazio</div><div class="t2">Adicione itens do cardápio</div></div>';
+      csWaBtn.disabled = true;
+      return;
+    }
+
+    // Items card
+    const card = document.createElement('div');
+    card.className = 'cs-card';
+    list.forEach(({ item, qty: q }) => {
+      const line = document.createElement('div');
+      line.className = 'cs-line';
+      line.innerHTML = `
+        <div class="cs-qty">
+          <button class="cs-dec" type="button">−</button>
+          <span class="cs-n">${q}</span>
+          <button class="cs-inc inc" type="button">+</button>
+        </div>
+        <div class="cs-name">
+          <div class="nm">${item.name}</div>
+          <div class="un">${BRL(item.price)} cada</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+          <div class="cs-price">${BRL(item.price * q)}</div>
+          <button class="cs-del" type="button" aria-label="Remover">
+            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+          </button>
+        </div>`;
+      line.querySelector('.cs-dec').addEventListener('click', () => { decItem(item.id); renderCartScreen(); });
+      line.querySelector('.cs-inc').addEventListener('click', () => { addItem(item.id); renderCartScreen(); });
+      line.querySelector('.cs-del').addEventListener('click', () => { delete cart[item.id]; renderCart(); renderCartScreen(); });
+      card.appendChild(line);
+    });
+    csBody.appendChild(card);
+
+    // Bumps
+    const suggestions = BUMP_IDS.map(byId).filter(it => it && !cart[it.id]);
+    if (suggestions.length) {
+      const bt = document.createElement('div');
+      bt.className = 'cs-bumps-title';
+      bt.textContent = '✨ Que tal completar o pedido?';
+      csBody.appendChild(bt);
+      const br = document.createElement('div');
+      br.className = 'cs-bump-row';
+      suggestions.forEach(it => {
+        const bc = document.createElement('div');
+        bc.className = 'cs-bump-card';
+        const ph = it.img ? `<img src="${it.img}" alt="${it.name}" onerror="this.parentNode.innerHTML='${it.emoji}'" />` : '';
+        bc.innerHTML = `<div class="cs-bump-img">${it.emoji}${ph}</div><div class="cs-bump-info"><div class="cs-bump-name">${it.name}</div><div class="cs-bump-foot"><span class="cs-bump-price">${BRL(it.price)}</span><button class="cs-bump-add" type="button">+</button></div></div>`;
+        bc.querySelector('.cs-bump-add').addEventListener('click', e => { e.stopPropagation(); addItem(it.id); renderCartScreen(); });
+        br.appendChild(bc);
+      });
+      csBody.appendChild(br);
+    }
+
+    // Summary
+    const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
+    const total = subtotal + DELIVERY;
+    const summary = document.createElement('div');
+    summary.className = 'cs-summary';
+    summary.innerHTML = `<div class="cs-srow"><span>Subtotal</span><span>${BRL(subtotal)}</span></div><div class="cs-srow"><span>Taxa de entrega</span><span>${BRL(DELIVERY)}</span></div><div class="cs-srow total"><span>Total</span><span class="tv">${BRL(total)}</span></div>`;
+    csBody.appendChild(summary);
+
+    // Address
+    const addrDiv = document.createElement('div');
+    addrDiv.className = 'cs-addr';
+    addrDiv.innerHTML = `<label for="csAddr">Endereço de entrega</label><input id="csAddr" type="text" autocomplete="street-address" placeholder="Rua, número, bairro..." value="${(document.getElementById('csAddr') || {}).value || ''}" />`;
+    csBody.appendChild(addrDiv);
+
+    csWaBtn.disabled = false;
+  }
+
+  // ── SHARED: render cart (called on every change) ──
+  function renderCart() {
+    // Update card badges on menu
     document.querySelectorAll('.card').forEach(c => {
       const f = c.querySelector('[data-flag]');
       if (!f) return;
@@ -858,123 +1133,75 @@
       else c.classList.remove('has-qty');
     });
 
-    // Clear list
-    orderList.innerHTML = '';
+    const list = entries(), qty = totalQty();
 
-    if (!list.length) {
-      orderList.innerHTML = '<div class="order-empty"><div class="ic">🍕</div><div class="t1">Seu carrinho está vazio</div><div class="t2">Escolha os itens deliciosos do cardápio</div></div>';
-      badge.style.display = 'none';
-      waBtn.disabled = true;
-      clearBtn.style.display = 'none';
-      mobileBar.style.display = 'none';
+    // Mobile bottom bar
+    if (isMobile()) {
+      if (qty > 0) {
+        mobileBar.style.display = 'flex';
+        mbBadge.textContent = qty;
+        mbCount.textContent = `${qty} ${qty === 1 ? 'item' : 'itens'}`;
+        const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
+        mbTotal.textContent = BRL(subtotal + DELIVERY);
+        if (cartScreen.classList.contains('open')) renderCartScreen();
+      } else {
+        mobileBar.style.display = 'none';
+        closeCart();
+      }
     } else {
-      list.forEach(({ item, qty: q }) => {
-        const line = document.createElement('div');
-        line.className = 'line';
-        line.innerHTML = `
-          <div class="qty">
-            <button class="qty-dec" type="button">−</button>
-            <span class="n">${q}</span>
-            <button class="qty-inc" type="button">+</button>
-          </div>
-          <div class="line-info">
-            <div class="nm">${item.name}</div>
-            <div class="unit">${BRL(item.price)} cada</div>
-          </div>
-          <div class="line-right">
-            <div class="line-total">${BRL(item.price * q)}</div>
-            <button class="del-btn" type="button">remover</button>
-          </div>`;
-
-        const dec = line.querySelector('.qty-dec');
-        const inc = line.querySelector('.qty-inc');
-        const del = line.querySelector('.del-btn');
-
-        // Both touch and click for iOS/Android compatibility
-        [dec, inc, del].forEach(btn => {
-          btn.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (btn === dec) decItem(item.id);
-            else if (btn === inc) addItem(item.id);
-            else { delete cart[item.id]; renderCart(); }
-          }, { passive: false });
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (btn === dec) decItem(item.id);
-            else if (btn === inc) addItem(item.id);
-            else { delete cart[item.id]; renderCart(); }
-          });
-        });
-
-        orderList.appendChild(line);
-      });
-
-      badge.style.display = 'inline-flex';
-      badge.textContent = qty;
-      waBtn.disabled = false;
-      clearBtn.style.display = 'block';
-
-      const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
-      const total = subtotal + DELIVERY;
-      subtotalEl.textContent = BRL(subtotal);
-      totalEl.textContent = BRL(total);
-      mobileBar.style.display = 'flex';
-      mbCount.textContent = `${qty} ${qty === 1 ? 'item' : 'itens'} · entrega R$ 5,00`;
-      mbTotal.textContent = BRL(total);
+      mobileBar.style.display = 'none';
+      renderDesktopCart();
     }
-
-    renderBumps();
-
-    const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
-    const total = list.length ? subtotal + DELIVERY : DELIVERY;
-    subtotalEl.textContent = BRL(subtotal);
-    totalEl.textContent = BRL(total);
   }
 
   function bumpBadge() { badge.classList.remove('bump'); void badge.offsetWidth; badge.classList.add('bump'); }
 
   clearBtn.addEventListener('click', clearCart);
-  clearBtn.addEventListener('touchend', (e) => { e.preventDefault(); clearCart(); }, { passive: false });
+  csClear.addEventListener('click', () => { clearCart(); closeCart(); });
 
-  // ============ WHATSAPP ============
-  function sendToWhatsApp() {
+  // WhatsApp sender
+  function buildMsg() {
     const list = entries();
-    if (!list.length) return;
-    const addr = document.getElementById('addrInput').value.trim();
+    const addr = (document.getElementById('csAddr') || document.getElementById('addrInput') || {}).value || '';
     const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
     const total = subtotal + DELIVERY;
-    let msg = '*Pedido — Pizzaria Familia Silva*\n';
-    msg += '\n';
-    if (addr) msg += `Entrega: ${addr}\n\n`;
+    let msg = '*Pedido — Pizzaria Familia Silva*
+
+';
+    if (addr) msg += `Entrega: ${addr}
+
+`;
     list.forEach(({ item, qty: q }) => {
-      msg += `${q}x ${item.name} - ${BRL(item.price * q)}\n`;
+      msg += `${q}x ${item.name} - ${BRL(item.price * q)}
+`;
       if (item.isPromo && item.items) {
         const parts = item.items.reduce((m, id) => { m[id] = (m[id] || 0) + 1; return m; }, {});
-        const inside = Object.entries(parts).map(([id, n]) => `${n}x ${byId(id).name}`).join(', ');
-        msg += `  (${inside})\n`;
+        msg += `  (${Object.entries(parts).map(([id, n]) => n + 'x ' + byId(id).name).join(', ')})
+`;
       }
     });
-    msg += `\nSubtotal: ${BRL(subtotal)}`;
-    msg += `\nEntrega: ${BRL(DELIVERY)}`;
-    msg += `\n*TOTAL: ${BRL(total)}*`;
-    msg += '\n\nAguardo confirmacao, obrigado!';
-    const url = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg);
-    window.location.href = url;
+    msg += `
+Subtotal: ${BRL(subtotal)}
+Entrega: ${BRL(DELIVERY)}
+*TOTAL: ${BRL(total)}*
+
+Aguardo confirmacao, obrigado!`;
+    return msg;
   }
 
-  waBtn.addEventListener('click', sendToWhatsApp);
-  waBtn.addEventListener('touchend', (e) => { e.preventDefault(); sendToWhatsApp(); }, { passive: false });
+  function sendWA() {
+    if (!entries().length) return;
+    window.location.href = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(buildMsg());
+  }
+
+  waBtn.addEventListener('click', sendWA);
+  csWaBtn.addEventListener('click', sendWA);
 
   // ============ SEARCH ============
   document.getElementById('search').addEventListener('input', e => { query = e.target.value; renderMenu(); renderPromos(); renderCart(); });
 
   // ============ MOBILE SHEET ============
-  function openSheet() { document.body.classList.add('sheet-open'); }
-  function closeSheet() { document.body.classList.remove('sheet-open'); }
-  document.getElementById('mbGo').onclick = openSheet;
-  document.getElementById('sheetClose').onclick = closeSheet;
-  document.getElementById('backdrop').onclick = closeSheet;
+  // Handled by mbGo/csBack listeners above
 
   renderMenu();
   renderPromos();
