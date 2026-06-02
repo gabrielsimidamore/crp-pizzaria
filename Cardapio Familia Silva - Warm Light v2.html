@@ -583,9 +583,10 @@
     .header { padding: 12px 16px; gap: 10px; }
     .brand h1 { font-size: 17px; }
     .open-badge { font-size: 11px; padding: 6px 10px; }
-    .hero { padding: 16px 16px 14px; min-height: 160px; }
+    .hero { padding: 16px 16px 14px; min-height: 160px; margin-bottom: 0; }
     .hero .ht h2 { font-size: clamp(1.25rem, 5.5vw, 1.8rem); }
     .hero p { font-size: 12.5px; }
+    .promo-wrap { margin-top: 12px; }
   }
 
   @media (max-width: 460px) {
@@ -1098,7 +1099,7 @@
       suggestions.forEach(it => {
         const bc = document.createElement('div');
         bc.className = 'cs-bump-card';
-        const ph = it.img ? `<img src="${it.img}" alt="${it.name}" onerror="this.parentNode.innerHTML='${it.emoji}'" />` : '';
+        const ph = it.img ? `<img src="${it.img}" alt="" onerror="this.remove()" />` : '';
         bc.innerHTML = `<div class="cs-bump-img">${it.emoji}${ph}</div><div class="cs-bump-info"><div class="cs-bump-name">${it.name}</div><div class="cs-bump-foot"><span class="cs-bump-price">${BRL(it.price)}</span><button class="cs-bump-add" type="button">+</button></div></div>`;
         bc.querySelector('.cs-bump-add').addEventListener('click', e => { e.stopPropagation(); addItem(it.id); renderCartScreen(); });
         br.appendChild(bc);
