@@ -314,7 +314,7 @@
   .order-empty .t2 { font-size: 13px; margin-top: 4px; color: var(--panel-empty); }
 
   .line {
-    display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center;
+    display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center;
     padding: 13px 4px; border-bottom: 1px dashed var(--panel-line);
     animation: slideInRight .2s ease;
   }
@@ -333,8 +333,14 @@
   .line-info .nm { font-size: 13px; font-weight: 600; color: var(--panel-text); line-height: 1.2; }
   .line-info .unit { font-size: 11px; color: var(--panel-muted); margin-top: 2px; }
   .line-total { font-family: 'Fraunces', serif; font-weight: 700; font-size: 14px; color: var(--panel-total); white-space: nowrap; }
-  .line-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-  .del-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: var(--red); opacity: .6; padding: 0 2px; line-height: 1; transition: opacity .15s; font-weight: 700; }
+  .line-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; min-width: 60px; }
+  .del-btn { 
+    background: rgba(214,48,49,0.12); border: 1px solid rgba(214,48,49,0.3); 
+    border-radius: 8px; cursor: pointer; font-size: 12px; color: var(--red); 
+    opacity: .9; padding: 4px 8px; line-height: 1; transition: all .15s;
+    font-weight: 700; font-family: inherit; white-space: nowrap;
+  }
+  .del-btn:hover { opacity: 1; background: var(--red); color: #fff; }
   .del-btn:hover { opacity: 1; }
   .addr-wrap { margin: 12px 0 8px; }
   .addr-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-bottom: 6px; }
@@ -893,7 +899,7 @@
           </div>
           <div class="line-right">
             <div class="line-total">${BRL(item.price * qty)}</div>
-            <button class="del-btn" aria-label="Remover item">✕</button>
+            <button class="del-btn" aria-label="Remover item">remover</button>
           </div>`;
         const btns = line.querySelectorAll('button');
         btns[0].onclick = () => decItem(item.id);
