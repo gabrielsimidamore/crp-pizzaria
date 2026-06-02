@@ -651,9 +651,9 @@
     let msg = '🍕 *Olá! Gostaria de fazer um pedido na Pizzaria Família Silva:*\n\n';
     list.forEach(({ item, qty }) => { msg += `• ${qty}x ${item.name} — ${BRL(item.price * qty)}\n`; });
     msg += '\n━━━━━━━━━━━━━━━━\n';
-    msg += `💰 Subtotal: ${BRL(subtotal)}\n`;
+    msg += `Subtotal: ${BRL(subtotal)}\n`;
     msg += `🛵 Taxa de entrega: ${BRL(DELIVERY)}\n`;
-    msg += `✅ *TOTAL: ${BRL(total)}*\n`;
+    msg += `*TOTAL: ${BRL(total)}*\n`;
     msg += '━━━━━━━━━━━━━━━━\n\n';
     msg += '_Aguardo a confirmação do meu pedido, obrigado!_ 🙏';
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');

@@ -749,7 +749,7 @@
     const subtotal = entries.reduce((s, { item, qty }) => s + item.price * qty, 0);
     const total = subtotal + DELIVERY;
 
-    let msg = '🍕 *Olá! Gostaria de fazer um pedido:*\n\n';
+    let msg = '*\ud83d\uded2 Novo Pedido!*\n\n';
     entries.forEach(({ item, qty }) => {
       msg += `- ${qty}x ${item.name} — ${BRL(item.price * qty)}\n`;
     });
