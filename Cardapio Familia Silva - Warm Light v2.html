@@ -878,7 +878,7 @@
     const total = subtotal + DELIVERY;
     let msg = '🍕 *Olá! Gostaria de fazer um pedido:*\n\n';
     list.forEach(({ item, qty }) => {
-      msg += `▪️ ${qty}x ${item.name} — ${BRL(item.price * qty)}\n`;
+      msg += `🍕 ${qty}x ${item.name} — ${BRL(item.price * qty)}\n`;
       if (item.isPromo && item.items) {
         const parts = item.items.reduce((m, id) => { m[id] = (m[id] || 0) + 1; return m; }, {});
         const inside = Object.entries(parts).map(([id, n]) => `${n}x ${byId(id).name}`).join(', ');

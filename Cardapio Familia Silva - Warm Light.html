@@ -551,7 +551,7 @@
     const subtotal = list.reduce((s, { item, qty }) => s + item.price * qty, 0);
     const total = subtotal + DELIVERY;
     let msg = '🍕 *Olá! Gostaria de fazer um pedido:*\n\n';
-    list.forEach(({ item, qty }) => { msg += `▪️ ${qty}x ${item.name} — ${BRL(item.price * qty)}\n`; });
+    list.forEach(({ item, qty }) => { msg += `🍕 ${qty}x ${item.name} — ${BRL(item.price * qty)}\n`; });
     msg += '\n━━━━━━━━━━━━━━━━━━\n';
     msg += `💰 Subtotal: ${BRL(subtotal)}\n`;
     msg += `🛵 Entrega: ${BRL(DELIVERY)}\n`;
