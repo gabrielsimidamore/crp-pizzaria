@@ -55,7 +55,7 @@
     --panel-qty-fg: #FFB347; --panel-empty: rgba(255,225,190,0.4);
   }
   body[data-panel="terracota"] {
-    --panel-bg: rgba(122,36,24,0.82); --panel-text: #FFF0EA; --panel-muted: rgba(255,220,210,0.68);
+    --panel-bg: rgba(122,36,24,0.95); --panel-text: #FFFFFF; --panel-muted: rgba(255,220,210,0.9);
     --panel-line: rgba(255,200,180,0.2); --panel-surface: rgba(92,24,16,0.5);
     --panel-total: #FFD580; --panel-qty-bg: rgba(255,255,255,0.12); --panel-qty-border: rgba(255,210,190,0.35);
     --panel-qty-fg: #FFD580; --panel-empty: rgba(255,220,210,0.45);
@@ -909,7 +909,7 @@
       const empty = document.createElement('div');
       empty.className = 'order-empty';
       empty.innerHTML = '<div class="ic">🍕</div><div class="t1">Seu carrinho está vazio</div><div class="t2">Escolha os itens deliciosos do cardápio</div>';
-      orderList.insertBefore(empty, bumpsEl);
+      orderList.insertBefore(empty, bumpsEl.parentNode === orderList ? bumpsEl : null);
       badge.style.display = 'none';
       waBtn.disabled = true; clearBtn.style.display = 'none';
     } else {
@@ -918,9 +918,9 @@
         line.className = 'line';
         line.innerHTML = `
           <div class="qty">
-            <button aria-label="Remover um">−</button>
+            <button class="qty-dec" type="button">−</button>
             <span class="n">${qty}</span>
-            <button aria-label="Adicionar um">+</button>
+            <button class="qty-inc" type="button">+</button>
           </div>
           <div class="line-info">
             <div class="nm">${item.name}</div>
@@ -928,13 +928,16 @@
           </div>
           <div class="line-right">
             <div class="line-total">${BRL(item.price * qty)}</div>
-            <button class="del-btn" aria-label="Remover item">remover</button>
+            <button class="del-btn" type="button">remover</button>
           </div>`;
-        const btns = line.querySelectorAll('button');
-        btns[0].onclick = () => decItem(item.id);
-        btns[1].onclick = () => addItem(item.id);
-        line.querySelector('.del-btn').onclick = () => { delete cart[item.id]; renderCart(); };
-        orderList.insertBefore(line, bumpsEl);
+        line.querySelector('.qty-dec').addEventListener('click', (e) => { e.stopPropagation(); decItem(item.id); });
+        line.querySelector('.qty-inc').addEventListener('click', (e) => { e.stopPropagation(); addItem(item.id); });
+        line.querySelector('.del-btn').addEventListener('click', (e) => { e.stopPropagation(); delete cart[item.id]; renderCart(); });
+        if (bumpsEl.parentNode === orderList) {
+          orderList.insertBefore(line, bumpsEl);
+        } else {
+          orderList.appendChild(line);
+        }
       });
       badge.style.display = 'inline-flex'; badge.textContent = qty;
       waBtn.disabled = false; clearBtn.style.display = 'block';
@@ -953,7 +956,6 @@
       mbTotal.textContent = BRL(total);
     } else {
       mobileBar.style.display = 'none';
-      closeSheet();
     }
   }
 
