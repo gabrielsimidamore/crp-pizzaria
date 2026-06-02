@@ -876,20 +876,22 @@
     if (!list.length) return;
     const subtotal = list.reduce((s, { item, qty }) => s + item.price * qty, 0);
     const total = subtotal + DELIVERY;
-    let msg = '*\ud83d\uded2 Novo Pedido!*\n\n';
+    let msg = '*Pedido — Familia Silva*\n';
+    msg += '----------------------------\n\n';
     list.forEach(({ item, qty }) => {
-      msg += `\u2022 ${qty}x ${item.name} — ${BRL(item.price * qty)}\n`;
+      msg += `${qty}x ${item.name} ......... ${BRL(item.price * qty)}\n`;
       if (item.isPromo && item.items) {
         const parts = item.items.reduce((m, id) => { m[id] = (m[id] || 0) + 1; return m; }, {});
         const inside = Object.entries(parts).map(([id, n]) => `${n}x ${byId(id).name}`).join(', ');
-        msg += `   ↳ _inclui: ${inside}_\n`;
+        msg += `   _( ${inside} )_\n`;
       }
     });
-    msg += '\n--------------------\n';
-    msg += `Subtotal: ${BRL(subtotal)}\n`;
-    msg += `Entrega: ${BRL(DELIVERY)}\n`;
-    msg += `*TOTAL: ${BRL(total)}*\n`;
-    msg += '--------------------\n\n';
+    msg += '\n----------------------------\n';
+    msg += `Subtotal ......... ${BRL(subtotal)}\n`;
+    msg += `Entrega ........... ${BRL(DELIVERY)}\n`;
+    msg += '----------------------------\n';
+    msg += `*TOTAL ............ ${BRL(total)}*\n`;
+    msg += '----------------------------\n\n';
     msg += '_Aguardo confirmacao, obrigado!_';
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
   };
