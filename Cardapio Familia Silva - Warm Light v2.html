@@ -878,118 +878,142 @@
   const totalQty = () => Object.values(cart).reduce((a, b) => a + b, 0);
 
   function renderBumps() {
-    const suggestions = BUMP_IDS.map(byId).filter(it => !cart[it.id]);
-    if (!totalQty() || !suggestions.length) { bumpsEl.style.display = 'none'; bumpRow.innerHTML = ''; return; }
+    if (!totalQty()) { bumpsEl.style.display = 'none'; return; }
+    const suggestions = BUMP_IDS.map(byId).filter(it => it && !cart[it.id]);
+    if (!suggestions.length) { bumpsEl.style.display = 'none'; return; }
     bumpsEl.style.display = 'block';
     bumpRow.innerHTML = '';
     suggestions.forEach(it => {
       const c = document.createElement('div');
       c.className = 'bump-card';
       const ph = it.img ? `<img src="${it.img}" alt="${it.name}" onerror="this.remove()" />` : '';
-      c.innerHTML = `
-        <div class="bimg">${it.emoji}${ph}</div>
-        <div class="binfo">
-          <div class="bn">${it.name}</div>
-          <div class="bp"><span class="bprice">${BRL(it.price)}</span><button class="badd" aria-label="Adicionar ${it.name}">+</button></div>
-        </div>`;
-      const add = () => addItem(it.id);
-      c.querySelector('.badd').onclick = (e) => { e.stopPropagation(); add(); };
-      c.onclick = add;
+      c.innerHTML = `<div class="bimg">${it.emoji}${ph}</div><div class="binfo"><div class="bn">${it.name}</div><div class="bp"><span class="bprice">${BRL(it.price)}</span><button class="badd" type="button">+</button></div></div>`;
+      c.querySelector('.badd').addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); addItem(it.id); }, { passive: false });
+      c.querySelector('.badd').addEventListener('click', (e) => { e.stopPropagation(); addItem(it.id); });
+      c.addEventListener('click', () => addItem(it.id));
       bumpRow.appendChild(c);
     });
   }
 
   function renderCart() {
-    const list = entries(), qty = totalQty();
+    const list = entries();
+    const qty = totalQty();
+
+    // Update card badges
     document.querySelectorAll('.card').forEach(c => {
       const f = c.querySelector('[data-flag]');
+      if (!f) return;
       if (cart[c.dataset.id]) { c.classList.add('has-qty'); f.textContent = cart[c.dataset.id]; }
       else c.classList.remove('has-qty');
     });
 
-    // Remove only .line elements, keep bumps div intact
-    orderList.querySelectorAll('.line, .order-empty').forEach(el => el.remove());
+    // Clear list
+    orderList.innerHTML = '';
 
     if (!list.length) {
-      const empty = document.createElement('div');
-      empty.className = 'order-empty';
-      empty.innerHTML = '<div class="ic">🍕</div><div class="t1">Seu carrinho está vazio</div><div class="t2">Escolha os itens deliciosos do cardápio</div>';
-      orderList.appendChild(empty);
+      orderList.innerHTML = '<div class="order-empty"><div class="ic">🍕</div><div class="t1">Seu carrinho está vazio</div><div class="t2">Escolha os itens deliciosos do cardápio</div></div>';
       badge.style.display = 'none';
-      waBtn.disabled = true; clearBtn.style.display = 'none';
+      waBtn.disabled = true;
+      clearBtn.style.display = 'none';
+      mobileBar.style.display = 'none';
     } else {
-      list.forEach(({ item, qty }) => {
+      list.forEach(({ item, qty: q }) => {
         const line = document.createElement('div');
         line.className = 'line';
         line.innerHTML = `
           <div class="qty">
             <button class="qty-dec" type="button">−</button>
-            <span class="n">${qty}</span>
+            <span class="n">${q}</span>
             <button class="qty-inc" type="button">+</button>
           </div>
           <div class="line-info">
             <div class="nm">${item.name}</div>
-            <div class="unit">(${BRL(item.price)} cada)</div>
+            <div class="unit">${BRL(item.price)} cada</div>
           </div>
           <div class="line-right">
-            <div class="line-total">${BRL(item.price * qty)}</div>
+            <div class="line-total">${BRL(item.price * q)}</div>
             <button class="del-btn" type="button">remover</button>
           </div>`;
-        line.querySelector('.qty-dec').addEventListener('click', (e) => { e.stopPropagation(); decItem(item.id); });
-        line.querySelector('.qty-inc').addEventListener('click', (e) => { e.stopPropagation(); addItem(item.id); });
-        line.querySelector('.del-btn').addEventListener('click', (e) => { e.stopPropagation(); delete cart[item.id]; renderCart(); });
+
+        const dec = line.querySelector('.qty-dec');
+        const inc = line.querySelector('.qty-inc');
+        const del = line.querySelector('.del-btn');
+
+        // Both touch and click for iOS/Android compatibility
+        [dec, inc, del].forEach(btn => {
+          btn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (btn === dec) decItem(item.id);
+            else if (btn === inc) addItem(item.id);
+            else { delete cart[item.id]; renderCart(); }
+          }, { passive: false });
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (btn === dec) decItem(item.id);
+            else if (btn === inc) addItem(item.id);
+            else { delete cart[item.id]; renderCart(); }
+          });
+        });
+
         orderList.appendChild(line);
       });
-      badge.style.display = 'inline-flex'; badge.textContent = qty;
-      waBtn.disabled = false; clearBtn.style.display = 'block';
+
+      badge.style.display = 'inline-flex';
+      badge.textContent = qty;
+      waBtn.disabled = false;
+      clearBtn.style.display = 'block';
+
+      const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
+      const total = subtotal + DELIVERY;
+      subtotalEl.textContent = BRL(subtotal);
+      totalEl.textContent = BRL(total);
+      mobileBar.style.display = 'flex';
+      mbCount.textContent = `${qty} ${qty === 1 ? 'item' : 'itens'} · entrega R$ 5,00`;
+      mbTotal.textContent = BRL(total);
     }
 
     renderBumps();
 
-    const subtotal = list.reduce((s, { item, qty }) => s + item.price * qty, 0);
+    const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
     const total = list.length ? subtotal + DELIVERY : DELIVERY;
     subtotalEl.textContent = BRL(subtotal);
     totalEl.textContent = BRL(total);
-
-    if (qty > 0) {
-      mobileBar.style.display = 'flex';
-      mbCount.textContent = `${qty} ${qty === 1 ? 'item' : 'itens'} · entrega R$ 5,00`;
-      mbTotal.textContent = BRL(total);
-    } else {
-      mobileBar.style.display = 'none';
-    }
   }
 
   function bumpBadge() { badge.classList.remove('bump'); void badge.offsetWidth; badge.classList.add('bump'); }
-  clearBtn.onclick = clearCart;
+
+  clearBtn.addEventListener('click', clearCart);
+  clearBtn.addEventListener('touchend', (e) => { e.preventDefault(); clearCart(); }, { passive: false });
 
   // ============ WHATSAPP ============
-  waBtn.onclick = () => {
+  function sendToWhatsApp() {
     const list = entries();
     if (!list.length) return;
     const addr = document.getElementById('addrInput').value.trim();
-    const subtotal = list.reduce((s, { item, qty }) => s + item.price * qty, 0);
+    const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
     const total = subtotal + DELIVERY;
-    let msg = '*Pedido — Familia Silva*\n';
-    msg += '----------------------------\n\n';
+    let msg = '*Pedido — Pizzaria Familia Silva*\n';
+    msg += '\n';
     if (addr) msg += `Entrega: ${addr}\n\n`;
-    list.forEach(({ item, qty }) => {
-      msg += `${qty}x ${item.name} ......... ${BRL(item.price * qty)}\n`;
+    list.forEach(({ item, qty: q }) => {
+      msg += `${q}x ${item.name} - ${BRL(item.price * q)}\n`;
       if (item.isPromo && item.items) {
         const parts = item.items.reduce((m, id) => { m[id] = (m[id] || 0) + 1; return m; }, {});
         const inside = Object.entries(parts).map(([id, n]) => `${n}x ${byId(id).name}`).join(', ');
-        msg += `   _( ${inside} )_\n`;
+        msg += `  (${inside})\n`;
       }
     });
-    msg += '\n----------------------------\n';
-    msg += `Subtotal ......... ${BRL(subtotal)}\n`;
-    msg += `Entrega ........... ${BRL(DELIVERY)}\n`;
-    msg += '----------------------------\n';
-    msg += `*TOTAL ............ ${BRL(total)}*\n`;
-    msg += '----------------------------\n\n';
-    msg += '_Aguardo confirmacao, obrigado!_';
-    window.location.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
-  };
+    msg += `\nSubtotal: ${BRL(subtotal)}`;
+    msg += `\nEntrega: ${BRL(DELIVERY)}`;
+    msg += `\n*TOTAL: ${BRL(total)}*`;
+    msg += '\n\nAguardo confirmacao, obrigado!';
+    const url = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg);
+    window.location.href = url;
+  }
+
+  waBtn.addEventListener('click', sendToWhatsApp);
+  waBtn.addEventListener('touchend', (e) => { e.preventDefault(); sendToWhatsApp(); }, { passive: false });
 
   // ============ SEARCH ============
   document.getElementById('search').addEventListener('input', e => { query = e.target.value; renderMenu(); renderPromos(); renderCart(); });
