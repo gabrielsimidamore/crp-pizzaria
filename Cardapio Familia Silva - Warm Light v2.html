@@ -516,9 +516,6 @@
     .promo-card { min-width: min(240px, 86vw); }
     .line-info .nm { max-width: 100px; }
   }
-    .bumps-inner { padding: 14px 16px; }
-    .bump { min-width: 140px; }
-  }
 
   /* ============ TWEAKS PANEL ============ */
   #tweaks {
@@ -626,11 +623,10 @@
           <button class="sheet-close" id="sheetClose" aria-label="Fechar">✕</button>
         </div>
       </div>
-      <div class="order-list scroll-area" id="orderList">
-        <div class="bumps" id="bumps" style="display:none">
-          <div class="bumps-head"><span class="spark">✨</span> Que tal completar o pedido?</div>
-          <div class="bump-row" id="bumpRow"></div>
-        </div>
+      <div class="order-list scroll-area" id="orderList"></div>
+      <div class="bumps" id="bumps" style="display:none">
+        <div class="bumps-head"><span class="spark">✨</span> Que tal completar o pedido?</div>
+        <div class="bump-row" id="bumpRow"></div>
       </div>
       <div class="order-foot">
         <div class="srow"><span>Subtotal</span><span class="v" id="subtotal">R$ 0,00</span></div>
@@ -918,7 +914,7 @@
       const empty = document.createElement('div');
       empty.className = 'order-empty';
       empty.innerHTML = '<div class="ic">🍕</div><div class="t1">Seu carrinho está vazio</div><div class="t2">Escolha os itens deliciosos do cardápio</div>';
-      orderList.insertBefore(empty, bumpsEl.parentNode === orderList ? bumpsEl : null);
+      orderList.appendChild(empty);
       badge.style.display = 'none';
       waBtn.disabled = true; clearBtn.style.display = 'none';
     } else {
@@ -942,11 +938,7 @@
         line.querySelector('.qty-dec').addEventListener('click', (e) => { e.stopPropagation(); decItem(item.id); });
         line.querySelector('.qty-inc').addEventListener('click', (e) => { e.stopPropagation(); addItem(item.id); });
         line.querySelector('.del-btn').addEventListener('click', (e) => { e.stopPropagation(); delete cart[item.id]; renderCart(); });
-        if (bumpsEl.parentNode === orderList) {
-          orderList.insertBefore(line, bumpsEl);
-        } else {
-          orderList.appendChild(line);
-        }
+        orderList.appendChild(line);
       });
       badge.style.display = 'inline-flex'; badge.textContent = qty;
       waBtn.disabled = false; clearBtn.style.display = 'block';
