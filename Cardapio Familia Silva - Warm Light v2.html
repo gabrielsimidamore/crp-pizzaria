@@ -425,8 +425,7 @@
       padding: 8px 16px;
     }
 
-    /* Bumps — fixed height, no shrink */
-    .bumps { flex-shrink: 0; max-height: 180px; overflow: hidden; }
+    .bumps { max-height: none; overflow: visible; }
 
     /* Footer — fixed, no scroll */
     .order-foot { 
@@ -618,10 +617,11 @@
           <button class="sheet-close" id="sheetClose" aria-label="Fechar">✕</button>
         </div>
       </div>
-      <div class="order-list scroll-area" id="orderList"></div>
-      <div class="bumps" id="bumps" style="display:none">
-        <div class="bumps-head"><span class="spark">✨</span> Que tal completar o pedido?</div>
-        <div class="bump-row" id="bumpRow"></div>
+      <div class="order-list scroll-area" id="orderList">
+        <div class="bumps" id="bumps" style="display:none">
+          <div class="bumps-head"><span class="spark">✨</span> Que tal completar o pedido?</div>
+          <div class="bump-row" id="bumpRow"></div>
+        </div>
       </div>
       <div class="order-foot">
         <div class="srow"><span>Subtotal</span><span class="v" id="subtotal">R$ 0,00</span></div>
@@ -902,12 +902,17 @@
       else c.classList.remove('has-qty');
     });
 
+    // Remove only .line elements, keep bumps div intact
+    orderList.querySelectorAll('.line, .order-empty').forEach(el => el.remove());
+
     if (!list.length) {
-      orderList.innerHTML = '<div class="order-empty"><div class="ic">🍕</div><div class="t1">Seu carrinho está vazio</div><div class="t2">Escolha os itens deliciosos do cardápio</div></div>';
+      const empty = document.createElement('div');
+      empty.className = 'order-empty';
+      empty.innerHTML = '<div class="ic">🍕</div><div class="t1">Seu carrinho está vazio</div><div class="t2">Escolha os itens deliciosos do cardápio</div>';
+      orderList.insertBefore(empty, bumpsEl);
       badge.style.display = 'none';
       waBtn.disabled = true; clearBtn.style.display = 'none';
     } else {
-      orderList.innerHTML = '';
       list.forEach(({ item, qty }) => {
         const line = document.createElement('div');
         line.className = 'line';
@@ -929,7 +934,7 @@
         btns[0].onclick = () => decItem(item.id);
         btns[1].onclick = () => addItem(item.id);
         line.querySelector('.del-btn').onclick = () => { delete cart[item.id]; renderCart(); };
-        orderList.appendChild(line);
+        orderList.insertBefore(line, bumpsEl);
       });
       badge.style.display = 'inline-flex'; badge.textContent = qty;
       waBtn.disabled = false; clearBtn.style.display = 'block';
