@@ -3,24 +3,25 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Pizzaria Família Silva · Cardápio Digital</title>
-<meta name="description" content="Cardápio digital da Pizzaria Família Silva em Osasco. Pizzas salgadas, doces, lanches e bebidas — peça pelo WhatsApp e receba quentinha em casa." />
-<meta name="theme-color" content="#D63031" />
-<link rel="icon" type="image/png" href="assets/favicon.png" />
-<link rel="apple-touch-icon" href="assets/favicon.png" />
-<meta property="og:title" content="Pizzaria Família Silva · Cardápio Digital" />
+<title>Pizzo · Cardápio Digital</title>
+<meta name="description" content="Pizzo — cardápio digital para pizzarias. Pizzas salgadas, doces, lanches e bebidas com pedido direto pelo WhatsApp." />
+<meta name="theme-color" content="#E8432A" />
+<link rel="icon" type="image/png" href="assets/favicon-pizzo.png" />
+<link rel="apple-touch-icon" href="assets/favicon-pizzo.png" />
+<meta property="og:title" content="Pizzo · Cardápio Digital" />
 <meta property="og:description" content="Massa fininha, borda dourada, queijo escorrendo. Peça pelo WhatsApp!" />
 <meta property="og:type" content="website" />
-<meta property="og:image" content="assets/hero-poster.jpg" />
+<meta property="og:image" content="assets/logo-pizzo-og.jpg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800;9..144,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --red: #D63031;
-    --red-deep: #B71C1C;
-    --red-light: #FF6B6B;
-    --orange: #E17055;
+    --red: #E8432A;
+    --red-deep: #C0341D;
+    --red-light: #FF7A5C;
+    --orange: #F5A623;
+    --brand-grad: linear-gradient(120deg, #F5A623 0%, #E8432A 100%);
     --yellow: #FDCB6E;
     --green: #00B894;
     --green-badge: #27AE60;
@@ -87,6 +88,7 @@
   .app { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) 392px; height: 100vh; }
   .main { min-width: 0; overflow-y: auto; height: 100vh; }
   .main-inner { padding: 0 28px 60px; }
+  .main-inner.hero-wrap { padding-bottom: 0; }
 
   /* glass helper */
   .glass {
@@ -109,10 +111,15 @@
   }
   .logo {
     width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0;
-    border: 3px solid var(--red); overflow: hidden; background: #2a0d05;
-    box-shadow: 0 4px 16px rgba(214,48,49,0.25);
+    overflow: hidden; background: #0d0d0d;
+    box-shadow: 0 4px 16px rgba(232,67,42,0.3);
   }
-  .logo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 24%; display: block; }
+  .logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .brand-tag {
+    font-size: 9px; font-weight: 800; letter-spacing: .14em;
+    background: var(--brand-grad); color: #fff;
+    padding: 3px 8px; border-radius: 6px;
+  }
   .brand { flex: 1; min-width: 220px; }
   .brand .nm { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
   .brand h1 { font-family: 'Fraunces', serif; font-weight: 800; font-size: 22px; color: var(--brown); line-height: 1.05; }
@@ -132,7 +139,7 @@
   .hero {
     margin: 18px 0 4px;
     border-radius: 22px; overflow: hidden; position: relative;
-    background: linear-gradient(115deg, #C0392B 0%, #E14B2A 55%, #E8732B 100%);
+    background: linear-gradient(115deg, #C0341D 0%, #E8432A 55%, #F5A623 100%);
     color: #fff; padding: 24px 26px; min-height: 268px;
     box-shadow: 0 16px 44px rgba(214,48,49,0.30);
     display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 13px;
@@ -199,7 +206,7 @@
     white-space: nowrap; transition: all .2s ease; flex-shrink: 0;
   }
   .chip:hover { background: #FFE4DA; color: var(--red); }
-  .chip.active { background: var(--red); color: #fff; border-color: var(--red); box-shadow: 0 4px 16px rgba(214,48,49,0.35); transform: scale(1.03); }
+  .chip.active { background: var(--brand-grad); color: #fff; border-color: transparent; box-shadow: 0 4px 16px rgba(232,67,42,0.35); transform: scale(1.03); }
   .search { position: relative; max-width: 360px; }
   .search input {
     width: 100%; font-family: inherit; font-size: 14px; color: var(--brown);
@@ -215,7 +222,18 @@
   .section-head h2 { font-family: 'Fraunces', serif; font-weight: 800; font-size: 21px; color: var(--brown); }
   .section-head .count { font-size: 13px; color: var(--brown-mid); font-weight: 400; }
 
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(228px, 1fr)); gap: 18px; }
+  .grid {
+    display: flex; gap: 16px; overflow-x: auto; padding: 4px 2px 14px;
+    scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: #F3C5B0 transparent;
+    cursor: grab; -webkit-overflow-scrolling: touch;
+  }
+  .grid.dragging { cursor: grabbing; scroll-snap-type: none; }
+  .dragging > * { pointer-events: none; }
+  .grid, .promo-row { user-select: none; }
+  .grid::-webkit-scrollbar { height: 8px; }
+  .grid::-webkit-scrollbar-thumb { background: #F3C5B0; border-radius: 20px; }
+  .grid .card { flex: 0 0 222px; scroll-snap-align: start; }
+  .grid .empty-state { flex: 1 1 100%; }
 
   /* ============ CARD (liquid glass) ============ */
   .card {
@@ -284,7 +302,7 @@
   .price small { font-size: 13px; font-weight: 600; }
   .add-btn {
     width: 38px; height: 38px; flex-shrink: 0; border: none; border-radius: 50%;
-    background: var(--red); color: #fff; font-size: 21px; line-height: 1; cursor: pointer;
+    background: var(--brand-grad); color: #fff; font-size: 21px; line-height: 1; cursor: pointer;
     display: grid; place-items: center; box-shadow: 0 4px 14px rgba(214,48,49,0.45); transition: transform .15s, box-shadow .15s;
   }
   .add-btn:hover { transform: scale(1.12); box-shadow: 0 6px 20px rgba(214,48,49,0.6); }
@@ -577,8 +595,9 @@
     .cs-empty .t1 { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: #555; }
     .cs-empty .t2 { font-size: 13px; color: #aaa; margin-top: 6px; }
 
-    /* Cards grid */
-    .grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    /* Cards carrossel */
+    .grid { gap: 10px; padding-bottom: 10px; }
+    .grid .card { flex: 0 0 44vw; max-width: 180px; }
     .card-img { height: 110px; }
     .card-body { padding: 10px 12px 0; }
     .card-body h3 { font-size: 13.5px; }
@@ -627,6 +646,76 @@
   .cs-addr .pay-chip { background: #faf5f0; border-color: #e0d8d0; color: #555; }
   .cs-addr .pay-chip.active { background: var(--red); border-color: var(--red); color: #fff; }
 
+  /* ============ MODAL DE PRODUTO ============ */
+  .pm-overlay {
+    position: fixed; inset: 0; z-index: 300; background: rgba(30,12,8,0.5);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center;
+  }
+  .pm-overlay.open { display: flex; }
+  .pm {
+    background: #fff; width: min(440px, calc(100vw - 32px)); max-height: 86vh;
+    border-radius: 22px; overflow: hidden; display: flex; flex-direction: column;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.35); animation: pmIn .25s ease;
+  }
+  @keyframes pmIn { from { opacity: 0; transform: translateY(24px) scale(.97); } to { opacity: 1; transform: none; } }
+  .pm-media { position: relative; height: 170px; flex-shrink: 0; background: linear-gradient(145deg,#FFECD2,#FCB69F); display: grid; place-items: center; font-size: 60px; }
+  .pm-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .pm-close {
+    position: absolute; top: 12px; right: 12px; width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(255,255,255,0.92); border: none; cursor: pointer; font-size: 15px; color: #333;
+    display: grid; place-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent; z-index: 2;
+  }
+  .pm-body { flex: 1; overflow-y: auto; padding: 16px 18px; }
+  .pm-body h3 { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 800; color: #1a1a1a; }
+  .pm-body .pm-desc { font-size: 13px; color: #777; margin-top: 4px; line-height: 1.5; }
+  .pm-sect { font-size: 12px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: #999; margin: 18px 0 8px; display: flex; align-items: center; justify-content: space-between; }
+  .pm-sect .req { font-size: 10px; background: #f2ece6; color: #888; padding: 3px 8px; border-radius: 99px; letter-spacing: 0; text-transform: none; }
+  .pm-opt {
+    display: flex; align-items: center; gap: 11px; padding: 11px 4px;
+    border-bottom: 1px solid #f5efe9; cursor: pointer;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  }
+  .pm-opt:last-child { border-bottom: none; }
+  .pm-opt .ck {
+    width: 21px; height: 21px; border-radius: 50%; border: 2px solid #ddd; flex-shrink: 0;
+    display: grid; place-items: center; transition: all .15s; font-size: 11px; color: #fff;
+  }
+  .pm-opt.sq .ck { border-radius: 6px; }
+  .pm-opt.sel .ck { background: var(--brand-grad); border-color: transparent; }
+  .pm-opt .on { flex: 1; font-size: 14px; font-weight: 600; color: #2a2a2a; }
+  .pm-opt .op { font-size: 13px; font-weight: 700; color: var(--red); white-space: nowrap; }
+  .pm-foot { flex-shrink: 0; padding: 12px 18px; padding-bottom: max(12px, env(safe-area-inset-bottom)); border-top: 1px solid #f0e8e0; display: flex; gap: 12px; align-items: center; background: #fff; }
+  .pm-qty { display: flex; align-items: center; gap: 8px; }
+  .pm-qty button {
+    width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--red); background: #fff;
+    color: var(--red); font-size: 19px; font-weight: 700; cursor: pointer; display: grid; place-items: center;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  }
+  .pm-qty .n { font-family: 'Fraunces', serif; font-weight: 800; font-size: 17px; min-width: 22px; text-align: center; }
+  .pm-add {
+    flex: 1; font-family: inherit; font-size: 14.5px; font-weight: 700; color: #fff;
+    background: var(--brand-grad); border: none; border-radius: 13px; padding: 14px 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    box-shadow: 0 6px 18px rgba(232,67,42,0.35);
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  }
+  @media (max-width: 768px) {
+    .pm-overlay { align-items: flex-end; }
+    .pm { width: 100%; max-height: 88vh; border-radius: 22px 22px 0 0; animation: pmUp .28s cubic-bezier(.4,0,.2,1); }
+    @keyframes pmUp { from { transform: translateY(100%); } to { transform: none; } }
+  }
+
+  /* toast */
+  .toast {
+    position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%) translateY(20px);
+    background: rgba(28,16,10,0.92); color: #fff; font-size: 13px; font-weight: 600;
+    padding: 11px 18px; border-radius: 12px; z-index: 400; opacity: 0; pointer-events: none;
+    transition: opacity .25s, transform .25s; max-width: calc(100vw - 40px); text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
   /* ============ ACESSIBILIDADE ============ */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
@@ -671,22 +760,22 @@
     <!-- MAIN -->
     <div class="main scroll-area">
       <header class="header">
-        <div class="logo"><img src="assets/logo-familia-silva-opt.webp" alt="Pizzaria Família Silva" width="56" height="56" /></div>
+        <div class="logo"><img src="assets/logo-pizzo.webp" alt="Pizzo · Cardápio Digital" width="56" height="56" /></div>
         <div class="brand">
           <div class="nm">
-            <h1>Pizzaria Família Silva</h1>
+            <h1>Pizzo</h1>
+            <span class="brand-tag">CARDÁPIO DIGITAL</span>
             <span class="stars">⭐⭐⭐⭐⭐<b>4,9 · 1.2k avaliações</b></span>
           </div>
           <div class="addr">
-            <span>Rua Padre Kassabian, 636B</span><span class="sep">·</span>
-            <span>Osasco</span><span class="sep">·</span>
-            <span>(11) 94962-3319</span>
+            <span>🛵 Entrega em Osasco e região</span><span class="sep">·</span>
+            <span>📱 (11) 98079-4899</span>
           </div>
         </div>
         <div class="open-badge" id="openBadge"><span class="dot"></span><span id="openText">⏰ Aberto até 00h</span></div>
       </header>
 
-      <div class="main-inner">
+      <div class="main-inner hero-wrap">
         <div class="hero">
           <video class="hero-vid" autoplay muted loop playsinline preload="metadata" poster="assets/hero-poster.webp">
             <source src="assets/foodporn-1.mp4" type="video/mp4" />
@@ -796,6 +885,23 @@
     </div>
   </div>
 
+  <!-- MODAL DE PRODUTO -->
+  <div class="pm-overlay" id="pmOverlay">
+    <div class="pm" role="dialog" aria-modal="true">
+      <div class="pm-media" id="pmMedia"><button class="pm-close" id="pmClose" aria-label="Fechar">✕</button></div>
+      <div class="pm-body" id="pmBody"></div>
+      <div class="pm-foot">
+        <div class="pm-qty">
+          <button type="button" id="pmDec" aria-label="Diminuir">−</button>
+          <span class="n" id="pmQty">1</span>
+          <button type="button" id="pmInc" aria-label="Aumentar">+</button>
+        </div>
+        <button class="pm-add" id="pmAdd"><span>Adicionar</span><span id="pmPrice">R$ 0,00</span></button>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
   <!-- MOBILE BOTTOM BAR -->
   <div class="mobile-bar" id="mobileBar" style="display:none">
     <div class="mb-left">
@@ -895,6 +1001,37 @@
   // Horário de funcionamento (24h). Ex.: abre 18h, fecha 00h.
   const OPEN_HOUR = 18, CLOSE_HOUR = 24;
 
+  // Bordas recheadas (apenas pizzas salgadas)
+  const BORDAS = [
+    { id: 'catupiry', name: 'Borda de Catupiry', price: 10 },
+    { id: 'cheddar',  name: 'Borda de Cheddar',  price: 10 },
+  ];
+  // Adicionais por categoria
+  const EXTRAS = {
+    salgadas: [
+      { id: 'queijo',    name: 'Mais queijo',     price: 6 },
+      { id: 'bacon',     name: 'Bacon',           price: 7 },
+      { id: 'calabresa', name: 'Calabresa extra', price: 7 },
+      { id: 'catupiry',  name: 'Catupiry',        price: 6 },
+      { id: 'cheddar',   name: 'Cheddar',         price: 6 },
+      { id: 'milho',     name: 'Milho',           price: 4 },
+    ],
+    doces: [
+      { id: 'condensado', name: 'Leite condensado', price: 4 },
+      { id: 'morango',    name: 'Morango extra',    price: 6 },
+      { id: 'granulado',  name: 'Granulado',        price: 3 },
+    ],
+    lanches: [
+      { id: 'queijo', name: 'Mais queijo',     price: 4 },
+      { id: 'bacon',  name: 'Bacon',           price: 5 },
+      { id: 'ovo',    name: 'Ovo',             price: 3 },
+      { id: 'burger', name: 'Hambúrguer extra', price: 8 },
+    ],
+  };
+  const bordaById = id => BORDAS.find(b => b.id === id);
+  const extrasOf = cat => EXTRAS[cat] || [];
+  const hasOptions = item => item.cat === 'salgadas' || extrasOf(item.cat).length > 0;
+
   // promos: combos with a discounted bundle price. items = list of menu ids.
   const PROMOS = [
     { id: 'p1', name: 'Combo Casal', desc: '1 Pizza Grande + 2 Refri Lata — noite perfeita a dois', items: ['s1','b1','b1'], price: 52, video: 'assets/foodporn-1.mp4' },
@@ -904,9 +1041,31 @@
   ];
 
   let activeCat = 'all', query = '';
+  // cart: { chave: { id, qty, borda, extras[] } } — chave composta por item + opções
   let cart = {};
-  try { cart = JSON.parse(localStorage.getItem('pfs_cart') || '{}'); } catch (e) { cart = {}; }
+  try {
+    const raw = JSON.parse(localStorage.getItem('pfs_cart') || '{}');
+    Object.entries(raw).forEach(([k, v]) => {
+      if (typeof v === 'number') cart[k] = { id: k, qty: v, borda: null, extras: [] }; // migração do formato antigo
+      else if (v && v.id && byId(v.id)) cart[k] = { id: v.id, qty: v.qty || 1, borda: v.borda || null, extras: v.extras || [] };
+    });
+  } catch (e) { cart = {}; }
   function saveCart() { try { localStorage.setItem('pfs_cart', JSON.stringify(cart)); } catch (e) {} }
+
+  const keyOf = (id, borda, extras) => id + (borda ? '|b:' + borda : '') + (extras && extras.length ? '|e:' + [...extras].sort().join(',') : '');
+  function unitPrice(e) {
+    let p = byId(e.id).price;
+    if (e.borda) { const b = bordaById(e.borda); if (b) p += b.price; }
+    (e.extras || []).forEach(xid => { const x = extrasOf(byId(e.id).cat).find(o => o.id === xid); if (x) p += x.price; });
+    return p;
+  }
+  function optionsLabel(e) {
+    const parts = [];
+    if (e.borda) { const b = bordaById(e.borda); if (b) parts.push(b.name); }
+    (e.extras || []).forEach(xid => { const x = extrasOf(byId(e.id).cat).find(o => o.id === xid); if (x) parts.push('+ ' + x.name); });
+    return parts.join(' · ');
+  }
+  const qtyOf = id => Object.values(cart).reduce((s, e) => s + (e.id === id ? e.qty : 0), 0);
   // estado do checkout compartilhado entre desktop e mobile
   const checkout = { name: '', addr: '', pay: '', change: '', obs: '' };
   try { Object.assign(checkout, JSON.parse(localStorage.getItem('pfs_checkout') || '{}')); } catch (e) {}
@@ -1012,14 +1171,22 @@
         <button class="add-btn" aria-label="Adicionar ${item.name}">+</button>
       </div>`;
     const btn = el.querySelector('.add-btn');
-    btn.onclick = (e) => { e.stopPropagation(); btn.classList.remove('bounce'); void btn.offsetWidth; btn.classList.add('bounce'); addItem(item.id); };
-    el.onclick = () => addItem(item.id);
+    btn.onclick = (e) => { e.stopPropagation(); btn.classList.remove('bounce'); void btn.offsetWidth; btn.classList.add('bounce'); addItem(item.id); showToast(`${item.name} no pedido ✅`); };
+    el.onclick = () => hasOptions(item) ? openProduct(item) : addItem(item.id);
     return el;
   }
 
   // ============ CART ============
-  function addItem(id) { cart[id] = (cart[id] || 0) + 1; saveCart(); renderCart(); bumpBadge(); }
-  function decItem(id) { if (!cart[id]) return; cart[id]--; if (cart[id] <= 0) delete cart[id]; saveCart(); renderCart(); }
+  function addLine(id, qty = 1, borda = null, extras = []) {
+    const k = keyOf(id, borda, extras);
+    if (cart[k]) cart[k].qty += qty;
+    else cart[k] = { id, qty, borda, extras: [...extras] };
+    saveCart(); renderCart(); bumpBadge();
+  }
+  const addItem = id => addLine(id, 1);
+  function incKey(k) { if (cart[k]) { cart[k].qty++; saveCart(); renderCart(); } }
+  function decKey(k) { if (!cart[k]) return; cart[k].qty--; if (cart[k].qty <= 0) delete cart[k]; saveCart(); renderCart(); }
+  function delKey(k) { delete cart[k]; saveCart(); renderCart(); }
   function clearCart() { for (const k in cart) delete cart[k]; saveCart(); renderCart(); }
 
   // Desktop elements
@@ -1046,8 +1213,8 @@
   const csBack = document.getElementById('csBack');
 
   const isMobile = () => window.innerWidth <= 768;
-  const entries = () => Object.keys(cart).map(id => ({ item: byId(id), qty: cart[id] }));
-  const totalQty = () => Object.values(cart).reduce((a, b) => a + b, 0);
+  const entries = () => Object.entries(cart).map(([key, e]) => ({ key, e, item: byId(e.id), qty: e.qty, unit: unitPrice(e) }));
+  const totalQty = () => Object.values(cart).reduce((a, e) => a + e.qty, 0);
 
   // Open/close cart screen (mobile)
   function openCart() { cartScreen.classList.add('open'); document.body.style.overflow = 'hidden'; renderCartScreen(); }
@@ -1056,12 +1223,41 @@
   csBack.addEventListener('click', closeCart);
 
   // ── DESKTOP: render bumps ──
+  // pizza salgada no carrinho ainda sem borda → sugerir borda recheada
+  const pizzaSemBorda = () => entries().find(x => x.item && x.item.cat === 'salgadas' && !x.e.borda);
+
+  function applyBordaBump(key, bordaId) {
+    const ent = cart[key]; if (!ent) return;
+    const item = byId(ent.id);
+    if (ent.qty > 1) ent.qty--; else delete cart[key];
+    const nk = keyOf(ent.id, bordaId, ent.extras);
+    if (cart[nk]) cart[nk].qty++;
+    else cart[nk] = { id: ent.id, qty: 1, borda: bordaId, extras: [...(ent.extras || [])] };
+    saveCart(); renderCart();
+    showToast(`${bordaById(bordaId).name} na ${item.name} 🧀`);
+  }
+
+  function bordaBumpCard(target, bordaId, compact) {
+    const b = bordaById(bordaId);
+    const c = document.createElement('div');
+    c.className = compact ? 'cs-bump-card' : 'bump-card';
+    c.innerHTML = compact
+      ? `<div class="cs-bump-img">🧀</div><div class="cs-bump-info"><div class="cs-bump-name">${b.name}</div><div class="cs-bump-foot"><span class="cs-bump-price">+${BRL(b.price)}</span><button class="cs-bump-add" type="button">+</button></div></div>`
+      : `<div class="bimg">🧀</div><div class="binfo"><div class="bn">${b.name}</div><div class="bp"><span class="bprice">+${BRL(b.price)}</span><button class="badd" type="button">+</button></div></div>`;
+    const go = e => { if (e) e.stopPropagation(); applyBordaBump(target.key, bordaId); };
+    c.querySelector('button').addEventListener('click', go);
+    c.addEventListener('click', go);
+    return c;
+  }
+
   function renderBumps() {
     if (!totalQty()) { bumpsEl.style.display = 'none'; return; }
-    const suggestions = BUMP_IDS.map(byId).filter(it => it && !cart[it.id]);
-    if (!suggestions.length) { bumpsEl.style.display = 'none'; return; }
+    const target = pizzaSemBorda();
+    const suggestions = BUMP_IDS.map(byId).filter(it => it && !qtyOf(it.id));
+    if (!suggestions.length && !target) { bumpsEl.style.display = 'none'; return; }
     bumpsEl.style.display = 'block';
     bumpRow.innerHTML = '';
+    if (target) BORDAS.forEach(b => bumpRow.appendChild(bordaBumpCard(target, b.id, false)));
     suggestions.forEach(it => {
       const c = document.createElement('div');
       c.className = 'bump-card';
@@ -1082,20 +1278,21 @@
       badge.style.display = 'none';
       waBtn.disabled = true; clearBtn.style.display = 'none';
     } else {
-      list.forEach(({ item, qty: q }) => {
+      list.forEach(({ key, e: ent, item, qty: q, unit }) => {
+        const opts = optionsLabel(ent);
         const line = document.createElement('div');
         line.className = 'line';
-        line.innerHTML = `<div class="qty"><button class="dec" type="button">−</button><span class="n">${q}</span><button class="inc" type="button">+</button></div><div class="line-info"><div class="nm">${item.name}</div><div class="unit">${BRL(item.price)} cada</div></div><div class="line-right"><div class="line-total">${BRL(item.price * q)}</div><button class="del-btn" type="button">remover</button></div>`;
-        line.querySelector('.dec').addEventListener('click', e => { e.stopPropagation(); decItem(item.id); });
-        line.querySelector('.inc').addEventListener('click', e => { e.stopPropagation(); addItem(item.id); });
-        line.querySelector('.del-btn').addEventListener('click', e => { e.stopPropagation(); delete cart[item.id]; saveCart(); renderCart(); });
+        line.innerHTML = `<div class="qty"><button class="dec" type="button">−</button><span class="n">${q}</span><button class="inc" type="button">+</button></div><div class="line-info"><div class="nm">${item.name}</div>${opts ? `<div class="unit">${opts}</div>` : ''}<div class="unit">${BRL(unit)} cada</div></div><div class="line-right"><div class="line-total">${BRL(unit * q)}</div><button class="del-btn" type="button">remover</button></div>`;
+        line.querySelector('.dec').addEventListener('click', ev => { ev.stopPropagation(); decKey(key); });
+        line.querySelector('.inc').addEventListener('click', ev => { ev.stopPropagation(); incKey(key); });
+        line.querySelector('.del-btn').addEventListener('click', ev => { ev.stopPropagation(); delKey(key); });
         orderList.appendChild(line);
       });
       badge.style.display = 'inline-flex'; badge.textContent = qty;
       waBtn.disabled = false; clearBtn.style.display = 'block';
     }
     renderBumps();
-    const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
+    const subtotal = list.reduce((s, { unit, qty: q }) => s + unit * q, 0);
     const total = list.length ? subtotal + DELIVERY : 0;
     subtotalEl.textContent = BRL(subtotal);
     totalEl.textContent = BRL(total);
@@ -1116,7 +1313,8 @@
     // Items card
     const card = document.createElement('div');
     card.className = 'cs-card';
-    list.forEach(({ item, qty: q }) => {
+    list.forEach(({ key, e: ent, item, qty: q, unit }) => {
+      const opts = optionsLabel(ent);
       const line = document.createElement('div');
       line.className = 'cs-line';
       line.innerHTML = `
@@ -1127,30 +1325,37 @@
         </div>
         <div class="cs-name">
           <div class="nm">${item.name}</div>
-          <div class="un">${BRL(item.price)} cada</div>
+          ${opts ? `<div class="un">${opts}</div>` : ''}
+          <div class="un">${BRL(unit)} cada</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-          <div class="cs-price">${BRL(item.price * q)}</div>
+          <div class="cs-price">${BRL(unit * q)}</div>
           <button class="cs-del" type="button" aria-label="Remover">
             <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
           </button>
         </div>`;
-      line.querySelector('.cs-dec').addEventListener('click', () => { decItem(item.id); renderCartScreen(); });
-      line.querySelector('.cs-inc').addEventListener('click', () => { addItem(item.id); renderCartScreen(); });
-      line.querySelector('.cs-del').addEventListener('click', () => { delete cart[item.id]; saveCart(); renderCart(); renderCartScreen(); });
+      line.querySelector('.cs-dec').addEventListener('click', () => { decKey(key); renderCartScreen(); });
+      line.querySelector('.cs-inc').addEventListener('click', () => { incKey(key); renderCartScreen(); });
+      line.querySelector('.cs-del').addEventListener('click', () => { delKey(key); renderCartScreen(); });
       card.appendChild(line);
     });
     csBody.appendChild(card);
 
     // Bumps
-    const suggestions = BUMP_IDS.map(byId).filter(it => it && !cart[it.id]);
-    if (suggestions.length) {
+    const target = pizzaSemBorda();
+    const suggestions = BUMP_IDS.map(byId).filter(it => it && !qtyOf(it.id));
+    if (suggestions.length || target) {
       const bt = document.createElement('div');
       bt.className = 'cs-bumps-title';
       bt.textContent = '✨ Que tal completar o pedido?';
       csBody.appendChild(bt);
       const br = document.createElement('div');
       br.className = 'cs-bump-row';
+      if (target) BORDAS.forEach(b => {
+        const bc = bordaBumpCard(target, b.id, true);
+        bc.addEventListener('click', () => setTimeout(renderCartScreen, 0));
+        br.appendChild(bc);
+      });
       suggestions.forEach(it => {
         const bc = document.createElement('div');
         bc.className = 'cs-bump-card';
@@ -1163,7 +1368,7 @@
     }
 
     // Summary
-    const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
+    const subtotal = list.reduce((s, { unit, qty: q }) => s + unit * q, 0);
     const total = subtotal + DELIVERY;
     const summary = document.createElement('div');
     summary.className = 'cs-summary';
@@ -1199,7 +1404,8 @@
     document.querySelectorAll('.card').forEach(c => {
       const f = c.querySelector('[data-flag]');
       if (!f) return;
-      if (cart[c.dataset.id]) { c.classList.add('has-qty'); f.textContent = cart[c.dataset.id]; }
+      const q = qtyOf(c.dataset.id);
+      if (q) { c.classList.add('has-qty'); f.textContent = q; }
       else c.classList.remove('has-qty');
     });
 
@@ -1211,7 +1417,7 @@
         mobileBar.style.display = 'flex';
         mbBadge.textContent = qty;
         mbCount.textContent = `${qty} ${qty === 1 ? 'item' : 'itens'}`;
-        const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
+        const subtotal = list.reduce((s, { unit, qty: q }) => s + unit * q, 0);
         mbTotal.textContent = BRL(subtotal + DELIVERY);
         if (cartScreen.classList.contains('open')) renderCartScreen();
       } else {
@@ -1255,16 +1461,18 @@
   // WhatsApp sender
   function buildMsg() {
     const list = entries();
-    const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
+    const subtotal = list.reduce((s, { unit, qty: q }) => s + unit * q, 0);
     const total = subtotal + DELIVERY;
     const NL = String.fromCharCode(10);
-    let msg = '*Pedido — Pizzaria Família Silva* ' + String.fromCodePoint(0x1F355) + NL + NL;
+    let msg = '*Novo Pedido — Pizzo* ' + String.fromCodePoint(0x1F355) + NL + NL;
     if (checkout.name) msg += 'Cliente: ' + checkout.name + NL;
     if (checkout.addr) msg += 'Entrega: ' + checkout.addr + NL;
     if (checkout.pay) msg += 'Pagamento: ' + checkout.pay + (checkout.pay === 'Dinheiro' && checkout.change ? ' (troco para R$ ' + checkout.change + ')' : '') + NL;
     msg += NL + '*Itens:*' + NL;
-    list.forEach(({ item, qty: q }) => {
-      msg += q + 'x ' + item.name + ' — ' + BRL(item.price * q) + NL;
+    list.forEach(({ e: ent, item, qty: q, unit }) => {
+      msg += q + 'x ' + item.name + ' — ' + BRL(unit * q) + NL;
+      const opts = optionsLabel(ent);
+      if (opts) msg += '   (' + opts + ')' + NL;
       if (item.isPromo && item.items) {
         const parts = item.items.reduce((m, id) => { m[id] = (m[id] || 0) + 1; return m; }, {});
         msg += '   (' + Object.entries(parts).map(([id, n]) => n + 'x ' + byId(id).name).join(', ') + ')' + NL;
@@ -1300,6 +1508,99 @@
 
   // ============ MOBILE SHEET ============
   // Handled by mbGo/csBack listeners above
+
+  // ============ TOAST ============
+  const toastEl = document.getElementById('toast');
+  let toastTimer;
+  function showToast(txt) {
+    toastEl.textContent = txt;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+  }
+
+  // ============ MODAL DE PRODUTO ============
+  const pmOverlay = document.getElementById('pmOverlay');
+  const pmMedia = document.getElementById('pmMedia');
+  const pmBody = document.getElementById('pmBody');
+  const pmQtyEl = document.getElementById('pmQty');
+  const pmPriceEl = document.getElementById('pmPrice');
+  let pm = null;
+
+  function pmUnit() {
+    let p = pm.item.price;
+    if (pm.borda) p += bordaById(pm.borda).price;
+    pm.extras.forEach(xid => { const x = extrasOf(pm.item.cat).find(o => o.id === xid); if (x) p += x.price; });
+    return p;
+  }
+  function pmRefresh() {
+    pmQtyEl.textContent = pm.qty;
+    pmPriceEl.textContent = BRL(pmUnit() * pm.qty);
+    pmBody.querySelectorAll('.pm-opt[data-borda]').forEach(r => r.classList.toggle('sel', (r.dataset.borda || null) === (pm.borda || '') || (!pm.borda && r.dataset.borda === '')));
+    pmBody.querySelectorAll('.pm-opt[data-extra]').forEach(r => r.classList.toggle('sel', pm.extras.has(r.dataset.extra)));
+  }
+
+  function openProduct(item) {
+    pm = { item, qty: 1, borda: null, extras: new Set() };
+    pmMedia.innerHTML = `<button class="pm-close" aria-label="Fechar">✕</button>` + (item.img ? `<img src="${item.img}" alt="${item.name}" />` : `<span>${item.emoji}</span>`);
+    pmMedia.querySelector('.pm-close').addEventListener('click', closeProduct);
+
+    let h = `<h3>${item.name}</h3><div class="pm-desc">${item.desc}</div>`;
+    if (item.cat === 'salgadas') {
+      h += `<div class="pm-sect">Borda recheada <span class="req">escolha 1</span></div>`;
+      h += `<div class="pm-opt sel" data-borda=""><span class="ck">✓</span><span class="on">Sem borda</span><span class="op" style="color:#aaa">R$ 0,00</span></div>`;
+      BORDAS.forEach(b => { h += `<div class="pm-opt" data-borda="${b.id}"><span class="ck">✓</span><span class="on">${b.name}</span><span class="op">+ ${BRL(b.price)}</span></div>`; });
+    }
+    const ext = extrasOf(item.cat);
+    if (ext.length) {
+      h += `<div class="pm-sect">Adicionais <span class="req">opcional</span></div>`;
+      ext.forEach(x => { h += `<div class="pm-opt sq" data-extra="${x.id}"><span class="ck">✓</span><span class="on">${x.name}</span><span class="op">+ ${BRL(x.price)}</span></div>`; });
+    }
+    pmBody.innerHTML = h;
+    pmBody.querySelectorAll('.pm-opt[data-borda]').forEach(r => r.addEventListener('click', () => { pm.borda = r.dataset.borda || null; pmRefresh(); }));
+    pmBody.querySelectorAll('.pm-opt[data-extra]').forEach(r => r.addEventListener('click', () => { const id = r.dataset.extra; pm.extras.has(id) ? pm.extras.delete(id) : pm.extras.add(id); pmRefresh(); }));
+
+    pmRefresh();
+    pmOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeProduct() {
+    pmOverlay.classList.remove('open');
+    if (!cartScreen.classList.contains('open')) document.body.style.overflow = '';
+    pm = null;
+  }
+  document.getElementById('pmDec').addEventListener('click', () => { if (pm && pm.qty > 1) { pm.qty--; pmRefresh(); } });
+  document.getElementById('pmInc').addEventListener('click', () => { if (pm) { pm.qty++; pmRefresh(); } });
+  document.getElementById('pmAdd').addEventListener('click', () => {
+    if (!pm) return;
+    addLine(pm.item.id, pm.qty, pm.borda, [...pm.extras]);
+    showToast(`${pm.qty}x ${pm.item.name} no pedido ✅`);
+    closeProduct();
+  });
+  pmOverlay.addEventListener('click', e => { if (e.target === pmOverlay) closeProduct(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && pm) closeProduct(); });
+
+  // ============ ARRASTAR CARROSSEL (mouse) ============
+  (function () {
+    let el = null, startX = 0, startLeft = 0;
+    document.addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'mouse') return;
+      const t = e.target.closest('.grid, .promo-row, .bump-row, .cs-bump-row');
+      if (!t) return;
+      el = t; startX = e.clientX; startLeft = t.scrollLeft;
+    });
+    document.addEventListener('pointermove', e => {
+      if (!el) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 5) { el.classList.add('dragging'); e.preventDefault(); }
+      el.scrollLeft = startLeft - dx;
+    });
+    document.addEventListener('pointerup', () => {
+      if (!el) return;
+      const t = el; el = null;
+      setTimeout(() => t.classList.remove('dragging'), 0);
+    });
+  })();
 
   // re-render ao mudar entre mobile/desktop (rotação, redimensionamento)
   let lastMobile = isMobile(), rzTimer;
