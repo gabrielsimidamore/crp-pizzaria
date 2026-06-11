@@ -2,10 +2,1387 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<meta http-equiv="refresh" content="0; url=Cardapio Familia Silva - Warm Light v2.html" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Cardápio · Família Silva</title>
-<script>window.location.replace("Cardapio Familia Silva - Warm Light v2.html");</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Pizzaria Família Silva · Cardápio Digital</title>
+<meta name="description" content="Cardápio digital da Pizzaria Família Silva em Osasco. Pizzas salgadas, doces, lanches e bebidas — peça pelo WhatsApp e receba quentinha em casa." />
+<meta name="theme-color" content="#D63031" />
+<link rel="icon" type="image/png" href="assets/favicon.png" />
+<link rel="apple-touch-icon" href="assets/favicon.png" />
+<meta property="og:title" content="Pizzaria Família Silva · Cardápio Digital" />
+<meta property="og:description" content="Massa fininha, borda dourada, queijo escorrendo. Peça pelo WhatsApp!" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="assets/hero-poster.jpg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800;9..144,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #D63031;
+    --red-deep: #B71C1C;
+    --red-light: #FF6B6B;
+    --orange: #E17055;
+    --yellow: #FDCB6E;
+    --green: #00B894;
+    --green-badge: #27AE60;
+    --cream: #FFFBF7;
+    --warm-white: #FFF5EC;
+    --brown: #5a3c33;
+    --brown-mid: #8D6E63;
+    --brown-light: #D7CCC8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    color: var(--brown);
+    background-color: var(--bg-color, #FFFBF7);
+    line-height: 1.45;
+    transition: background-color .35s ease;
+    overflow-x: hidden;
+    font-size: 15px;
+  }
+  .serif { font-family: 'Fraunces', Georgia, serif; }
+
+  /* ============ THEMES (Tweaks) ============ */
+  body[data-bg="creme"]  { --bg-color: #FFFBF7; }
+  body[data-bg="trigo"]  { --bg-color: #F5E8D6; }
+  body[data-bg="rose"]   { --bg-color: #F3E3DD; }
+  body[data-bg="oliva"]  { --bg-color: #EEEDDD; }
+
+  body[data-panel="creme"] {
+    --panel-bg: rgba(255,245,236,0.72); --panel-text: #5a3c33; --panel-muted: #8D6E63;
+    --panel-line: rgba(240,228,218,0.9); --panel-surface: rgba(255,255,255,0.6);
+    --panel-total: #D63031; --panel-qty-bg: rgba(255,240,232,0.9); --panel-qty-border: #F3D5C5;
+    --panel-qty-fg: #D63031; --panel-empty: #D7CCC8;
+  }
+  body[data-panel="espresso"] {
+    --panel-bg: rgba(34,21,14,0.84); --panel-text: #FFF1E0; --panel-muted: rgba(255,225,190,0.62);
+    --panel-line: rgba(255,200,150,0.16); --panel-surface: rgba(18,11,7,0.5);
+    --panel-total: #FFB347; --panel-qty-bg: rgba(255,255,255,0.08); --panel-qty-border: rgba(255,200,150,0.3);
+    --panel-qty-fg: #FFB347; --panel-empty: rgba(255,225,190,0.4);
+  }
+  body[data-panel="terracota"] {
+    --panel-bg: #7a2418; --panel-text: #FFFFFF; --panel-muted: rgba(255,220,210,0.95);
+    --panel-line: rgba(255,180,160,0.3); --panel-surface: rgba(92,24,16,0.8);
+    --panel-total: #FFD580; --panel-qty-bg: rgba(255,255,255,0.2); --panel-qty-border: rgba(255,210,190,0.5);
+    --panel-qty-fg: #FFFFFF; --panel-empty: rgba(255,220,210,0.6);
+  }
+
+  /* warm blurred backdrop so the glass has something to refract */
+  .backdrop { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .55; }
+  .b1 { width: 520px; height: 520px; left: -120px; top: -140px; background: radial-gradient(circle, #FFD3A8, transparent 70%); }
+  .b2 { width: 460px; height: 460px; right: -100px; top: 12%; background: radial-gradient(circle, #FFC2C2, transparent 70%); }
+  .b3 { width: 600px; height: 600px; left: 18%; bottom: -240px; background: radial-gradient(circle, #FFE3A0, transparent 70%); }
+  .b4 { width: 420px; height: 420px; right: 22%; bottom: -160px; background: radial-gradient(circle, #C8F0D8, transparent 70%); }
+  .grain { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .03; }
+
+  .scroll-area { scrollbar-width: thin; scrollbar-color: #F3C5B0 transparent; }
+  .scroll-area::-webkit-scrollbar { width: 9px; }
+  .scroll-area::-webkit-scrollbar-thumb { background: #F3C5B0; border-radius: 20px; border: 2px solid transparent; background-clip: padding-box; }
+  .scroll-area::-webkit-scrollbar-thumb:hover { background: #ec9f7e; background-clip: padding-box; }
+
+  /* ============ APP SHELL ============ */
+  .app { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) 392px; height: 100vh; }
+  .main { min-width: 0; overflow-y: auto; height: 100vh; }
+  .main-inner { padding: 0 28px 60px; }
+
+  /* glass helper */
+  .glass {
+    background: rgba(255, 251, 247, 0.62);
+    backdrop-filter: blur(20px) saturate(170%);
+    -webkit-backdrop-filter: blur(20px) saturate(170%);
+    border: 1px solid rgba(255,255,255,0.7);
+  }
+
+  /* ============ HEADER ============ */
+  .header {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    padding: 18px 28px;
+    box-shadow: 0 2px 20px rgba(109,76,65,0.08);
+    border-bottom: 1px solid rgba(255,255,255,0.6);
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .logo {
+    width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0;
+    border: 3px solid var(--red); overflow: hidden; background: #2a0d05;
+    box-shadow: 0 4px 16px rgba(214,48,49,0.25);
+  }
+  .logo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 24%; display: block; }
+  .brand { flex: 1; min-width: 220px; }
+  .brand .nm { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+  .brand h1 { font-family: 'Fraunces', serif; font-weight: 800; font-size: 22px; color: var(--brown); line-height: 1.05; }
+  .brand .stars { font-size: 11px; letter-spacing: 1px; color: var(--yellow); }
+  .brand .stars b { color: var(--brown-mid); font-family: 'Plus Jakarta Sans'; font-size: 11.5px; letter-spacing: 0; margin-left: 3px; }
+  .brand .addr { margin-top: 3px; font-size: 12px; color: var(--brown-mid); display: flex; gap: 6px; flex-wrap: wrap; }
+  .brand .addr .sep { opacity: .55; }
+  .open-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #EAFAF1; border: 1px solid var(--green-badge); color: var(--green-badge);
+    font-weight: 700; font-size: 12.5px; padding: 8px 14px; border-radius: 999px; white-space: nowrap;
+  }
+  .open-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green-badge); animation: pulse 1.8s infinite; }
+  @keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: .4; } }
+
+  /* appetite hero strip — video */
+  .hero {
+    margin: 18px 0 4px;
+    border-radius: 22px; overflow: hidden; position: relative;
+    background: linear-gradient(115deg, #C0392B 0%, #E14B2A 55%, #E8732B 100%);
+    color: #fff; padding: 24px 26px; min-height: 268px;
+    box-shadow: 0 16px 44px rgba(214,48,49,0.30);
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 13px;
+  }
+  .hero-vid { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+  .hero-overlay { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(100deg, rgba(105,18,10,0.90) 0%, rgba(150,30,15,0.62) 40%, rgba(20,8,5,0.22) 78%, rgba(20,8,5,0.05) 100%),
+                linear-gradient(to top, rgba(20,8,5,0.55), transparent 45%); }
+  .hero .ht { position: relative; z-index: 2; max-width: 560px; }
+  .hero h2 { font-family: 'Fraunces', serif; font-weight: 800; font-size: clamp(18px, 5vw, 30px); line-height: 1.1; text-shadow: 0 2px 8px rgba(0,0,0,.4); }
+  .hero p { margin-top: 6px; font-size: 14px; color: rgba(255,255,255,.95); text-shadow: 0 1px 6px rgba(0,0,0,.45); }
+  .hero .pills { position: relative; z-index: 2; display: flex; gap: 9px; flex-wrap: wrap; }
+  .hero .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.35);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 8px 13px; border-radius: 999px; font-size: 12.5px; font-weight: 700; white-space: nowrap;
+  }
+  .hero .live-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(0,0,0,0.42); border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(6px);
+    padding: 6px 11px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .3px;
+    margin-bottom: 10px;
+  }
+  .hero .live-tag .rec { width: 8px; height: 8px; border-radius: 50%; background: #ff4d4d; box-shadow: 0 0 8px #ff4d4d; animation: pulse 1.4s infinite; }
+
+  /* ============ PROMOS ============ */
+  .promo-wrap { margin-top: 22px; }
+  .promo-head { display: flex; align-items: center; gap: 10px; margin: 0 2px 14px; }
+  .promo-head .bar { width: 4px; height: 24px; border-radius: 2px; background: linear-gradient(var(--red), var(--orange)); }
+  .promo-head h2 { font-family: 'Fraunces', serif; font-weight: 800; font-size: 21px; color: var(--brown); }
+  .promo-head .sub { font-size: 13px; color: var(--brown-mid); }
+  .promo-row { display: flex; gap: 16px; overflow-x: auto; padding: 2px 2px 10px; scrollbar-width: thin; scrollbar-color: #F3C5B0 transparent; }
+  .promo-row::-webkit-scrollbar { height: 8px; }
+  .promo-row::-webkit-scrollbar-thumb { background: #F3C5B0; border-radius: 20px; }
+  .promo-card {
+    flex-shrink: 0; width: 326px; display: flex; border-radius: 20px; overflow: hidden; cursor: pointer; position: relative;
+    background: rgba(255,255,255,0.6); backdrop-filter: blur(18px) saturate(170%); -webkit-backdrop-filter: blur(18px) saturate(170%);
+    border: 1px solid rgba(255,255,255,0.7); box-shadow: 0 10px 30px rgba(214,48,49,0.14), inset 0 1px 0 rgba(255,255,255,0.7);
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .promo-card:hover { transform: translateY(-5px); box-shadow: 0 20px 44px rgba(214,48,49,0.22); }
+  .promo-media { position: relative; width: 124px; flex-shrink: 0; overflow: hidden; background: linear-gradient(145deg,#FFECD2,#FCB69F); }
+  .promo-media img, .promo-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .promo-media .pct { position: absolute; top: 8px; left: 8px; background: var(--red); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 8px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,.25); }
+  .promo-info { flex: 1; min-width: 0; padding: 13px 14px 13px 15px; display: flex; flex-direction: column; }
+  .promo-info .pname { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; color: var(--brown); line-height: 1.12; }
+  .promo-info .pdesc { font-size: 11.5px; color: var(--brown-mid); line-height: 1.4; margin-top: 4px; flex: 1; }
+  .promo-info .pfoot { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; gap: 8px; }
+  .promo-info .pprices { display: flex; flex-direction: column; line-height: 1; }
+  .promo-info .pold { font-size: 11px; color: var(--brown-mid); text-decoration: line-through; }
+  .promo-info .pnew { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 800; color: var(--red); margin-top: 2px; }
+  .promo-info .pnew small { font-size: 12px; font-weight: 600; }
+  .promo-info .padd { display: inline-flex; align-items: center; gap: 6px; background: var(--red); color: #fff; border: none; font-family: inherit; font-size: 12.5px; font-weight: 700; padding: 9px 13px; border-radius: 11px; cursor: pointer; box-shadow: 0 4px 14px rgba(214,48,49,0.4); transition: transform .15s, box-shadow .15s; white-space: nowrap; }
+  .promo-info .padd:hover { transform: scale(1.05); box-shadow: 0 6px 18px rgba(214,48,49,0.55); }
+
+  /* ============ TOOLBAR ============ */
+  .toolbar { position: sticky; top: 92px; z-index: 19; margin: 16px -28px 0; padding: 12px 28px; background: rgba(255,251,247,0.82); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom: 1px solid rgba(243,232,224,0.9); }
+  .toolbar-inner { display: flex; flex-direction: column; gap: 12px; }
+  .cats { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+  .cats::-webkit-scrollbar { display: none; }
+  .chip {
+    font-family: inherit; font-size: 13.5px; font-weight: 600; color: var(--brown-mid);
+    background: rgba(255,240,232,0.9); border: 1px solid rgba(255,255,255,0.6); padding: 9px 18px; border-radius: 24px; cursor: pointer;
+    white-space: nowrap; transition: all .2s ease; flex-shrink: 0;
+  }
+  .chip:hover { background: #FFE4DA; color: var(--red); }
+  .chip.active { background: var(--red); color: #fff; border-color: var(--red); box-shadow: 0 4px 16px rgba(214,48,49,0.35); transform: scale(1.03); }
+  .search { position: relative; max-width: 360px; }
+  .search input {
+    width: 100%; font-family: inherit; font-size: 14px; color: var(--brown);
+    background: rgba(255,255,255,0.7); border: 1.5px solid var(--brown-light); border-radius: 12px;
+    padding: 11px 16px; transition: border-color .2s, box-shadow .2s;
+  }
+  .search input::placeholder { color: var(--brown-mid); }
+  .search input:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(214,48,49,0.12); }
+
+  /* ============ SECTIONS ============ */
+  .section-head { display: flex; align-items: center; gap: 12px; margin: 30px 2px 16px; }
+  .section-head .bar { width: 4px; height: 24px; border-radius: 2px; background: var(--red); }
+  .section-head h2 { font-family: 'Fraunces', serif; font-weight: 800; font-size: 21px; color: var(--brown); }
+  .section-head .count { font-size: 13px; color: var(--brown-mid); font-weight: 400; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(228px, 1fr)); gap: 18px; }
+
+  /* ============ CARD (liquid glass) ============ */
+  .card {
+    position: relative; border-radius: 22px; overflow: hidden; cursor: pointer; will-change: transform;
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(18px) saturate(170%);
+    -webkit-backdrop-filter: blur(18px) saturate(170%);
+    border: 1px solid rgba(255,255,255,0.7);
+    box-shadow: 0 8px 28px rgba(109,76,65,0.10), inset 0 1px 0 rgba(255,255,255,0.7);
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    display: flex; flex-direction: column;
+    animation: fadeInUp .35s ease both;
+  }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 22px 50px rgba(214,48,49,0.18), inset 0 1px 0 rgba(255,255,255,0.8);
+    border-color: rgba(214,48,49,0.35);
+  }
+  .card:active { transform: translateY(-2px); }
+
+  .card-img { position: relative; height: 152px; display: grid; place-items: center; font-size: 56px; overflow: hidden; }
+  .card-img .emoji { position: relative; z-index: 1; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.22)); transition: transform .3s ease; }
+  .card:hover .card-img .emoji { transform: scale(1.08) rotate(-3deg); }
+  .card-img .photo {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2;
+    transition: transform .4s ease;
+  }
+  .card:hover .card-img .photo { transform: scale(1.07); }
+  .card-img .shade { position: absolute; inset: 0; z-index: 3; background: linear-gradient(to top, rgba(40,15,10,0.34) 0%, transparent 42%); pointer-events: none; }
+  .cat-salgadas .card-img { background: linear-gradient(145deg, #FFECD2 0%, #FCB69F 100%); }
+  .cat-doces .card-img { background: linear-gradient(145deg, #FFD3E8 0%, #FFB3CC 100%); }
+  .cat-lanches .card-img { background: linear-gradient(145deg, #D4F5D4 0%, #B2DFAD 100%); }
+  .cat-bebidas .card-img { background: linear-gradient(145deg, #CCF2FF 0%, #99DFFF 100%); }
+
+  .tag {
+    position: absolute; top: 10px; left: 10px; z-index: 4;
+    font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 20px; color: #fff;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.22);
+  }
+  .tag.hot { background: var(--red); }
+  .tag.new { background: linear-gradient(135deg, #8E44AD, #C39BD3); }
+
+  .social {
+    position: absolute; bottom: 9px; left: 10px; z-index: 4;
+    font-size: 11px; font-weight: 700; color: #fff;
+    display: inline-flex; align-items: center; gap: 5px; text-shadow: 0 1px 4px rgba(0,0,0,.4);
+  }
+
+  .in-cart-flag {
+    position: absolute; top: 10px; right: 10px; z-index: 4;
+    min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px;
+    background: var(--green); color: #fff; font-size: 12px; font-weight: 800;
+    display: none; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.22);
+  }
+  .card.has-qty .in-cart-flag { display: inline-flex; }
+
+  .card-body { padding: 14px 16px 0; flex: 1; display: flex; flex-direction: column; }
+  .card-body h3 { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; color: var(--brown); line-height: 1.2; margin-bottom: 4px; }
+  .card-body p {
+    font-size: 12px; color: var(--brown-mid); line-height: 1.5; flex: 1;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .card-foot { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 16px; }
+  .price { font-family: 'Fraunces', serif; font-weight: 800; font-size: 20px; color: var(--red); line-height: 1; }
+  .price small { font-size: 13px; font-weight: 600; }
+  .add-btn {
+    width: 38px; height: 38px; flex-shrink: 0; border: none; border-radius: 50%;
+    background: var(--red); color: #fff; font-size: 21px; line-height: 1; cursor: pointer;
+    display: grid; place-items: center; box-shadow: 0 4px 14px rgba(214,48,49,0.45); transition: transform .15s, box-shadow .15s;
+  }
+  .add-btn:hover { transform: scale(1.12); box-shadow: 0 6px 20px rgba(214,48,49,0.6); }
+  .add-btn.bounce { animation: addBounce .25s ease; }
+  @keyframes addBounce { 0% { transform: scale(1); } 35% { transform: scale(0.88); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
+
+  .empty-state { grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--brown-mid); }
+  .empty-state .big { font-size: 48px; margin-bottom: 12px; opacity: .35; }
+
+  /* ============ ORDER PANEL ============ */
+  .order {
+    height: 100vh; display: flex; flex-direction: column;
+    background: var(--panel-bg);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    border-left: 1px solid rgba(255,255,255,0.18);
+    box-shadow: -8px 0 44px rgba(109,76,65,0.10);
+    transition: background .35s ease;
+  }
+  .sheet-grip { display: none; }
+  .order-head { padding: 22px 24px 16px; border-bottom: 1px solid var(--panel-line); }
+  .order-head .row { display: flex; align-items: center; gap: 10px; }
+  .order-head h2 { font-family: 'Fraunces', serif; font-weight: 800; font-size: 20px; color: var(--panel-text); }
+  .order-head .badge {
+    min-width: 24px; height: 24px; padding: 0 8px; border-radius: 999px; background: var(--red); color: #fff;
+    font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
+  }
+  .order-head .badge.bump { animation: addBounce .3s ease; }
+  .sheet-close { display: none; }
+
+  .order-list { flex: 1; overflow-y: auto; padding: 8px 20px; }
+  .order-empty { text-align: center; padding: 44px 18px; }
+  .order-empty .ic { font-size: 60px; opacity: .3; margin-bottom: 10px; }
+  .order-empty .t1 { font-family: 'Fraunces', serif; font-size: 16px; color: var(--panel-muted); font-weight: 700; }
+  .order-empty .t2 { font-size: 13px; margin-top: 4px; color: var(--panel-empty); }
+
+  .line {
+    display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center;
+    padding: 13px 4px; border-bottom: 1px dashed var(--panel-line);
+    animation: slideInRight .2s ease;
+  }
+  .line:last-child { border-bottom: none; }
+  @keyframes slideInRight { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
+
+  .qty { display: flex; align-items: center; gap: 6px; }
+  .qty button {
+    width: 34px; height: 34px; border-radius: 50%; background: var(--panel-qty-bg); border: 1px solid var(--panel-qty-border);
+    color: var(--panel-qty-fg); font-size: 18px; font-weight: 700; cursor: pointer; display: grid; place-items: center; line-height: 1; transition: all .15s;
+    -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  }
+  .qty button:active { background: var(--red); border-color: var(--red); color: #fff; transform: scale(0.92); }
+  .qty .n { font-family: 'Fraunces', serif; min-width: 22px; text-align: center; font-weight: 700; font-size: 16px; color: var(--panel-text); }
+
+  .line-info { min-width: 0; }
+  .line-info .nm { font-size: 13px; font-weight: 600; color: var(--panel-text); line-height: 1.2; }
+  .line-info .unit { font-size: 11px; color: var(--panel-muted); margin-top: 2px; }
+  .line-total { font-family: 'Fraunces', serif; font-weight: 700; font-size: 14px; color: var(--panel-total); white-space: nowrap; }
+  .line-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; min-width: 60px; }
+  .del-btn { 
+    background: rgba(255,100,80,0.2); border: 1px solid rgba(255,150,130,0.5); 
+    border-radius: 8px; cursor: pointer; font-size: 12px; color: #ffb3a0; 
+    padding: 5px 10px; line-height: 1; font-weight: 700; font-family: inherit; white-space: nowrap;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  }
+  .del-btn:active { background: rgba(255,80,50,0.5); }
+  .del-btn:hover { opacity: 1; }
+  .addr-wrap { margin: 10px 0 0; }
+  .addr-label { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--panel-muted); margin-bottom: 5px; }
+  .addr-input { width: 100%; background: var(--panel-qty-bg); border: 1px solid var(--panel-qty-border); border-radius: 10px; padding: 9px 12px; font-size: 13.5px; color: var(--panel-text); font-family: inherit; outline: none; }
+  .addr-input::placeholder { color: var(--panel-empty); }
+  .addr-input:focus { border-color: var(--red); }
+
+  /* order bumps */
+  .bumps { padding: 4px 20px 14px; }
+  .bumps-head { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; color: var(--panel-text); margin: 6px 0 10px; }
+  .bumps-head .spark { color: var(--orange); }
+  .bump-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+  .bump-row::-webkit-scrollbar { display: none; }
+  .bump-card {
+    flex-shrink: 0; width: 122px; border-radius: 14px; overflow: hidden; cursor: pointer; position: relative;
+    background: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.8);
+    box-shadow: 0 4px 14px rgba(109,76,65,0.08); transition: transform .15s, box-shadow .15s;
+  }
+  .bump-card:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(214,48,49,0.16); }
+  .bump-card .bimg { height: 56px; display: grid; place-items: center; font-size: 28px; position: relative; overflow: hidden; }
+  .bump-card .bimg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .bump-card .binfo { padding: 7px 9px 9px; }
+  .bump-card .bn { font-size: 11.5px; font-weight: 700; color: var(--brown); line-height: 1.15; }
+  .bump-card .bp { display: flex; align-items: center; justify-content: space-between; margin-top: 5px; }
+  .bump-card .bprice { font-family: 'Fraunces', serif; font-weight: 700; font-size: 13px; color: var(--red); }
+  .bump-card .badd { width: 22px; height: 22px; border-radius: 50%; background: var(--red); color: #fff; border: none; font-size: 15px; line-height: 1; display: grid; place-items: center; cursor: pointer; box-shadow: 0 3px 9px rgba(214,48,49,0.4); }
+
+  .order-foot { border-top: 1px solid var(--panel-line); padding: 14px 24px 18px; background: var(--panel-surface); overflow-y: auto; max-height: 62vh; flex-shrink: 0; }
+  .srow { display: flex; justify-content: space-between; font-size: 13px; color: var(--panel-muted); margin-bottom: 8px; }
+  .srow .v { color: var(--panel-text); font-weight: 600; }
+  .srow.total {
+    margin-top: 12px; padding-top: 13px; border-top: 1px dashed var(--panel-line);
+    align-items: baseline; color: var(--panel-text); font-size: 15px; font-weight: 700;
+  }
+  .srow.total .v { font-family: 'Fraunces', serif; font-size: 23px; font-weight: 800; color: var(--panel-total); }
+
+  .wa-btn {
+    width: 100%; margin-top: 12px; font-family: inherit; font-size: 15px; font-weight: 700; color: #fff;
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); border: none; border-radius: 14px; padding: 16px 20px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 6px 20px rgba(37,211,102,0.35); transition: all .2s;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  }
+  .wa-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(37,211,102,0.5); }
+  .wa-btn:disabled { opacity: .4; cursor: default; box-shadow: none; }
+  .wa-btn svg { width: 20px; height: 20px; }
+  .clear-link {    display: none; width: 100%; text-align: center; margin-top: 10px; font-size: 12.5px;
+    color: var(--panel-muted); background: none; border: none; cursor: pointer; font-family: inherit; transition: color .15s;
+  }
+  .clear-link:hover { color: var(--red); }
+
+  /* ============ MOBILE ============ */
+  .mobile-bar { display: none; }
+  .sheet-backdrop { display: none; }
+  .sheet-grip { display: none; }
+  .sheet-close { display: none; }
+  .cart-screen { display: none; }
+
+  @media (max-width: 768px) {
+    /* App layout */
+    .app { grid-template-columns: 1fr; height: auto; }
+    .main { height: auto; overflow: visible; }
+    .main-inner { padding: 0 16px 100px; }
+    .toolbar { top: 68px; padding: 10px 16px; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+    .toolbar::-webkit-scrollbar { display: none; }
+
+    /* Hide desktop order panel */
+    .order { display: none !important; }
+
+    /* ── BOTTOM BAR ── */
+    .mobile-bar {
+      display: flex;
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 100;
+      background: #fff;
+      border-top: 1px solid #f0e8e0;
+      padding: 10px 16px;
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
+      align-items: center; gap: 14px;
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.10);
+    }
+    .mobile-bar .mb-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+    .mobile-bar .mb-bag {
+      width: 42px; height: 42px; border-radius: 12px;
+      background: var(--red); display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; position: relative;
+    }
+    .mobile-bar .mb-bag svg { width: 20px; height: 20px; fill: #fff; }
+    .mobile-bar .mb-badge {
+      position: absolute; top: -6px; right: -6px;
+      min-width: 20px; height: 20px; padding: 0 5px;
+      background: #ff6b00; color: #fff; border-radius: 99px;
+      font-size: 11px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid #fff;
+    }
+    .mobile-bar .mb-texts { min-width: 0; }
+    .mobile-bar .mb-count { font-size: 12px; color: #888; white-space: nowrap; }
+    .mobile-bar .mb-total { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 800; color: #222; line-height: 1.1; }
+    .mobile-bar .mb-go {
+      background: var(--red); color: #fff;
+      font-family: inherit; font-weight: 700; font-size: 14px;
+      border: none; border-radius: 12px;
+      padding: 13px 20px;
+      cursor: pointer; white-space: nowrap;
+      touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+
+    /* ── CART SCREEN (full screen like iFood) ── */
+    .cart-screen {
+      display: flex;
+      flex-direction: column;
+      position: fixed; inset: 0; z-index: 200;
+      background: #f5f0eb;
+      transform: translateX(100%);
+      transition: transform .28s cubic-bezier(.4,0,.2,1);
+      overflow: hidden;
+    }
+    .cart-screen.open { transform: translateX(0); }
+
+    .cs-header {
+      background: #fff;
+      padding: 14px 16px 12px;
+      padding-top: max(14px, env(safe-area-inset-top));
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid #f0e8e0;
+      flex-shrink: 0;
+    }
+    .cs-back {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #f5f0eb; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+    .cs-back svg { width: 20px; height: 20px; fill: none; stroke: #333; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .cs-header h2 { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 800; color: #1a1a1a; flex: 1; }
+    .cs-header .cs-badge { background: var(--red); color: #fff; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 99px; }
+
+    .cs-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 16px; }
+
+    /* Items card */
+    .cs-card { background: #fff; border-radius: 16px; padding: 4px 0; margin-bottom: 12px; }
+    .cs-line {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px; border-bottom: 1px solid #f5f0eb;
+    }
+    .cs-line:last-child { border-bottom: none; }
+    .cs-qty { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .cs-qty button {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 1.5px solid var(--red); background: #fff;
+      color: var(--red); font-size: 18px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    }
+    .cs-qty button.inc { background: var(--red); color: #fff; }
+    .cs-qty .cs-n { font-family: 'Fraunces', serif; font-weight: 800; font-size: 16px; color: #1a1a1a; min-width: 20px; text-align: center; }
+    .cs-name { flex: 1; min-width: 0; }
+    .cs-name .nm { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+    .cs-name .un { font-size: 12px; color: #888; margin-top: 2px; }
+    .cs-price { font-family: 'Fraunces', serif; font-weight: 700; font-size: 15px; color: #1a1a1a; white-space: nowrap; text-align: right; }
+    .cs-del { background: none; border: none; cursor: pointer; padding: 6px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+    .cs-del svg { width: 18px; height: 18px; fill: none; stroke: #bbb; stroke-width: 2; }
+    .cs-del:active svg { stroke: var(--red); }
+
+    /* Bumps */
+    .cs-bumps-title { font-size: 13px; font-weight: 700; color: #555; margin: 16px 0 10px; padding: 0 4px; }
+    .cs-bump-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+    .cs-bump-row::-webkit-scrollbar { display: none; }
+    .cs-bump-card {
+      flex-shrink: 0; width: 120px; background: #fff; border-radius: 14px;
+      overflow: hidden; border: 1px solid #f0e8e0;
+    }
+    .cs-bump-img { height: 72px; display: grid; place-items: center; font-size: 30px; background: #faf5f0; position: relative; overflow: hidden; }
+    .cs-bump-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .cs-bump-info { padding: 8px 10px 10px; }
+    .cs-bump-name { font-size: 12px; font-weight: 600; color: #1a1a1a; line-height: 1.2; }
+    .cs-bump-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+    .cs-bump-price { font-family: 'Fraunces', serif; font-size: 13px; font-weight: 700; color: var(--red); }
+    .cs-bump-add {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--red); color: #fff; border: none;
+      font-size: 16px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Summary card */
+    .cs-summary { background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+    .cs-srow { display: flex; justify-content: space-between; font-size: 14px; color: #666; margin-bottom: 10px; }
+    .cs-srow.total { margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e0d8d0; color: #1a1a1a; font-weight: 700; font-size: 15px; margin-bottom: 0; }
+    .cs-srow.total .tv { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 800; color: var(--red); }
+
+    /* Address */
+    .cs-addr { background: #fff; border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; }
+    .cs-addr label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #888; display: block; margin-bottom: 8px; }
+    .cs-addr input {
+      width: 100%; font-family: inherit; font-size: 14px; color: #1a1a1a;
+      border: 1.5px solid #e0d8d0; border-radius: 10px;
+      padding: 11px 14px; outline: none;
+      background: #faf5f0;
+    }
+    .cs-addr input:focus { border-color: var(--red); }
+
+    /* Footer */
+    .cs-footer {
+      background: #fff; padding: 12px 16px;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+      border-top: 1px solid #f0e8e0; flex-shrink: 0;
+    }
+    .cs-wa-btn {
+      width: 100%; font-family: inherit; font-size: 15px; font-weight: 700; color: #fff;
+      background: #25D366; border: none; border-radius: 14px;
+      padding: 15px 20px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    }
+    .cs-wa-btn svg { width: 22px; height: 22px; fill: #fff; }
+    .cs-wa-btn:disabled { opacity: .4; }
+    .cs-clear { display: block; width: 100%; text-align: center; margin-top: 10px; font-size: 13px; color: #aaa; background: none; border: none; cursor: pointer; font-family: inherit; touch-action: manipulation; }
+
+    /* Empty state */
+    .cs-empty { text-align: center; padding: 60px 20px; }
+    .cs-empty .ic { font-size: 56px; opacity: .3; margin-bottom: 12px; }
+    .cs-empty .t1 { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: #555; }
+    .cs-empty .t2 { font-size: 13px; color: #aaa; margin-top: 6px; }
+
+    /* Cards grid */
+    .grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .card-img { height: 110px; }
+    .card-body { padding: 10px 12px 0; }
+    .card-body h3 { font-size: 13.5px; }
+    .card-body p { font-size: 11.5px; }
+    .price { font-size: 16px; }
+    .add-btn { width: 34px; height: 34px; font-size: 20px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+    .card { touch-action: manipulation; }
+    .card:active { opacity: .85; }
+    .promo-card { min-width: min(280px, 82vw); }
+    .header { padding: 12px 16px; gap: 10px; }
+    .brand h1 { font-size: 17px; }
+    .open-badge { font-size: 11px; padding: 6px 10px; }
+    .hero { padding: 16px 16px 14px; min-height: 160px; margin-bottom: 0; }
+    .hero .ht h2 { font-size: clamp(1.25rem, 5.5vw, 1.8rem); }
+    .hero p { font-size: 12.5px; }
+    .promo-wrap { margin-top: 12px; }
+  }
+
+  @media (max-width: 460px) {
+    .main-inner { padding: 0 12px 100px; }
+    .header { padding: 10px 12px; }
+    .toolbar { margin: 10px -12px 0; padding: 8px 12px; }
+    .grid { gap: 8px; }
+    .card-img { height: 100px; }
+    .card-body h3 { font-size: 13px; }
+    .price { font-size: 15px; }
+    .brand h1 { font-size: 15px; }
+    .hero { padding: 14px 12px; }
+    .promo-card { min-width: min(240px, 86vw); }
+  }
+
+  /* ============ CHECKOUT FIELDS ============ */
+  .open-badge.closed { background: #FDECEA; border-color: #E74C3C; color: #C0392B; }
+  .open-badge.closed .dot { background: #E74C3C; animation: none; }
+
+  .pay-row { display: flex; gap: 7px; margin-top: 8px; }
+  .pay-chip {
+    flex: 1; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+    padding: 9px 6px; border-radius: 10px; border: 1.5px solid var(--panel-qty-border);
+    background: var(--panel-qty-bg); color: var(--panel-text); transition: all .15s;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  }
+  .pay-chip.active { background: var(--red); border-color: var(--red); color: #fff; }
+  .field-err { border-color: #E74C3C !important; box-shadow: 0 0 0 3px rgba(231,76,60,.18) !important; }
+
+  .cs-addr .pay-chip { background: #faf5f0; border-color: #e0d8d0; color: #555; }
+  .cs-addr .pay-chip.active { background: var(--red); border-color: var(--red); color: #fff; }
+
+  /* ============ ACESSIBILIDADE ============ */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  }
+
+
+  #tweaks {
+    position: fixed; right: 16px; bottom: 16px; z-index: 9999; width: 256px;
+    background: rgba(255,251,247,0.82); color: var(--brown);
+    backdrop-filter: blur(24px) saturate(160%); -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.7); border-radius: 16px;
+    box-shadow: 0 16px 48px rgba(80,40,20,0.25); padding: 14px 16px 16px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  #tweaks[hidden] { display: none; }
+  #tweaks .twk-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; cursor: move; }
+  #tweaks .twk-hd b { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 700; }
+  #tweaks .twk-x { width: 24px; height: 24px; border: none; background: rgba(0,0,0,0.05); border-radius: 7px; cursor: pointer; color: var(--brown-mid); font-size: 14px; line-height: 1; }
+  #tweaks .twk-x:hover { background: rgba(0,0,0,0.1); }
+  #tweaks .twk-sect { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--brown-mid); margin: 12px 0 8px; }
+  #tweaks .twk-sect:first-of-type { margin-top: 0; }
+  #tweaks .sw-row { display: flex; gap: 8px; }
+  #tweaks .sw {
+    flex: 1; height: 40px; border-radius: 10px; cursor: pointer; position: relative;
+    border: 2px solid transparent; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+    transition: transform .12s, border-color .12s; overflow: hidden;
+  }
+  #tweaks .sw:hover { transform: translateY(-2px); }
+  #tweaks .sw.active { border-color: var(--red); }
+  #tweaks .sw .lab { position: absolute; bottom: 3px; left: 0; right: 0; text-align: center; font-size: 8.5px; font-weight: 700; color: rgba(0,0,0,0.5); text-shadow: 0 1px 2px rgba(255,255,255,0.5); }
+  #tweaks .sw.dark .lab { color: rgba(255,255,255,0.85); text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+  #tweaks .hint { font-size: 10.5px; color: var(--brown-mid); margin-top: 10px; line-height: 1.4; }
+</style>
 </head>
-<body></body>
+<body data-bg="trigo" data-panel="espresso">
+  <div class="backdrop">
+    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+  </div>
+  <svg class="grain"><filter id="gn"><feTurbulence baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#gn)"/></svg>
+
+  <div class="app">
+    <!-- MAIN -->
+    <div class="main scroll-area">
+      <header class="header">
+        <div class="logo"><img src="assets/logo-familia-silva-opt.webp" alt="Pizzaria Família Silva" width="56" height="56" /></div>
+        <div class="brand">
+          <div class="nm">
+            <h1>Pizzaria Família Silva</h1>
+            <span class="stars">⭐⭐⭐⭐⭐<b>4,9 · 1.2k avaliações</b></span>
+          </div>
+          <div class="addr">
+            <span>Rua Padre Kassabian, 636B</span><span class="sep">·</span>
+            <span>Osasco</span><span class="sep">·</span>
+            <span>(11) 94962-3319</span>
+          </div>
+        </div>
+        <div class="open-badge" id="openBadge"><span class="dot"></span><span id="openText">⏰ Aberto até 00h</span></div>
+      </header>
+
+      <div class="main-inner">
+        <div class="hero">
+          <video class="hero-vid" autoplay muted loop playsinline preload="metadata" poster="assets/hero-poster.webp">
+            <source src="assets/foodporn-1.mp4" type="video/mp4" />
+          </video>
+          <div class="hero-overlay"></div>
+          <div class="ht">
+            <span class="live-tag"><span class="rec"></span>AO VIVO DO FORNO</span>
+            <h2>Massa fininha, borda dourada, queijo escorrendo. 🔥</h2>
+            <p>Assada na hora no forno a lenha. Peça agora e receba quentinha na sua casa.</p>
+          </div>
+          <div class="pills">
+            <span class="pill">🛵 Entrega ~40min</span>
+            <span class="pill">🔥 Forno quente agora</span>
+            <span class="pill">⭐ 4,9 de avaliação</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-inner">
+          <div class="cats" id="cats"></div>
+          <div class="search">
+            <input type="text" id="search" placeholder="🔍 Buscar pizza, lanche..." autocomplete="off" />
+          </div>
+        </div>
+      </div>
+
+      <div class="main-inner">
+        <div class="promo-wrap" id="promoWrap">
+          <div class="promo-head">
+            <span class="bar"></span>
+            <h2>🔥 Promoções da Semana</h2>
+            <span class="sub" id="promoSub">· toque para adicionar o combo</span>
+          </div>
+          <div class="promo-row" id="promoRow"></div>
+        </div>
+        <div id="menu"></div>
+      </div>
+    </div>
+
+    <!-- ORDER PANEL -->
+    <aside class="order" id="order">
+      <div class="sheet-grip"></div>
+      <div class="order-head">
+        <div class="row">
+          <span style="font-size:18px">🛒</span>
+          <h2>Seu Pedido</h2>
+          <span class="badge" id="badge" style="display:none">0</span>
+          <button class="sheet-close" id="sheetClose" aria-label="Fechar">✕</button>
+        </div>
+      </div>
+      <div class="order-list scroll-area" id="orderList"></div>
+      <div class="bumps" id="bumps" style="display:none">
+        <div class="bumps-head"><span class="spark">✨</span> Que tal completar o pedido?</div>
+        <div class="bump-row" id="bumpRow"></div>
+      </div>
+      <div class="order-foot">
+        <div class="srow"><span>Subtotal</span><span class="v" id="subtotal">R$ 0,00</span></div>
+        <div class="srow"><span>Taxa de entrega</span><span class="v">R$ 5,00</span></div>
+        <div class="srow total"><span>Total</span><span class="v" id="total">R$ 5,00</span></div>
+        <div class="addr-wrap">
+          <label class="addr-label" for="nameInput">Seu nome</label>
+          <input class="addr-input ck-name" id="nameInput" type="text" autocomplete="name" placeholder="Como podemos te chamar?" />
+        </div>
+        <div class="addr-wrap">
+          <label class="addr-label" for="addrInput">Endereço de entrega</label>
+          <input class="addr-input ck-addr" id="addrInput" type="text" autocomplete="street-address" inputmode="text" placeholder="Rua, número, bairro..." />
+        </div>
+        <div class="addr-wrap">
+          <label class="addr-label">Pagamento</label>
+          <div class="pay-row" data-payrow>
+            <button type="button" class="pay-chip" data-pay="Pix">💠 Pix</button>
+            <button type="button" class="pay-chip" data-pay="Cartão">💳 Cartão</button>
+            <button type="button" class="pay-chip" data-pay="Dinheiro">💵 Dinheiro</button>
+          </div>
+          <input class="addr-input ck-change" type="text" inputmode="numeric" placeholder="Troco para quanto?" style="display:none;margin-top:8px" />
+        </div>
+        <div class="addr-wrap">
+          <label class="addr-label" for="obsInput">Observações <span style="opacity:.5;text-transform:none;letter-spacing:0">(opcional)</span></label>
+          <input class="addr-input ck-obs" id="obsInput" type="text" placeholder="Sem cebola, borda recheada..." />
+        </div>
+        <button class="wa-btn" id="waBtn" disabled>
+          <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16 .5C7.4.5.5 7.4.5 16c0 2.8.7 5.4 2 7.7L.5 31.5l8-2.1c2.2 1.2 4.8 1.9 7.5 1.9 8.6 0 15.5-6.9 15.5-15.5S24.6.5 16 .5zm0 28.2c-2.5 0-4.8-.7-6.8-1.8l-.5-.3-4.7 1.2 1.3-4.6-.3-.5A12.5 12.5 0 1 1 28.5 16 12.5 12.5 0 0 1 16 28.7zm7-9.3c-.4-.2-2.3-1.1-2.6-1.3s-.6-.2-.9.2-1 1.3-1.2 1.5-.4.3-.8.1a10.2 10.2 0 0 1-3-1.9 11.4 11.4 0 0 1-2.1-2.6c-.2-.4 0-.6.2-.8l.6-.7c.2-.2.2-.4.4-.6s0-.5 0-.7-.9-2.2-1.3-3-.6-.6-.9-.6h-.7a1.4 1.4 0 0 0-1 .5 4.2 4.2 0 0 0-1.3 3.1c0 1.9 1.3 3.6 1.5 3.9s2.7 4.1 6.5 5.7c3.2 1.4 3.9 1.1 4.6 1.1a3.8 3.8 0 0 0 2.5-1.8 3.1 3.1 0 0 0 .2-1.8c-.1-.2-.4-.3-.8-.5z"/></svg>
+          Enviar Pedido pelo WhatsApp
+        </button>
+        <button class="clear-link" id="clearBtn">Limpar pedido</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- MOBILE CART SCREEN (iFood style) -->
+  <div class="cart-screen" id="cartScreen">
+    <div class="cs-header">
+      <button class="cs-back" id="csBack">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <h2>Seu Pedido</h2>
+      <span class="cs-badge" id="csBadge">0</span>
+    </div>
+    <div class="cs-body" id="csBody"></div>
+    <div class="cs-footer">
+      <button class="cs-wa-btn" id="csWaBtn" disabled>
+        <svg viewBox="0 0 32 32" fill="#fff"><path d="M16 .5C7.4.5.5 7.4.5 16c0 2.8.7 5.4 2 7.7L.5 31.5l8-2.1c2.2 1.2 4.8 1.9 7.5 1.9 8.6 0 15.5-6.9 15.5-15.5S24.6.5 16 .5zm0 28.2c-2.5 0-4.8-.7-6.8-1.8l-.5-.3-4.7 1.2 1.3-4.6-.3-.5A12.5 12.5 0 1 1 28.5 16 12.5 12.5 0 0 1 16 28.7zm7-9.3c-.4-.2-2.3-1.1-2.6-1.3s-.6-.2-.9.2-1 1.3-1.2 1.5-.4.3-.8.1a10.2 10.2 0 0 1-3-1.9 11.4 11.4 0 0 1-2.1-2.6c-.2-.4 0-.6.2-.8l.6-.7c.2-.2.2-.4.4-.6s0-.5 0-.7-.9-2.2-1.3-3-.6-.6-.9-.6h-.7a1.4 1.4 0 0 0-1 .5 4.2 4.2 0 0 0-1.3 3.1c0 1.9 1.3 3.6 1.5 3.9s2.7 4.1 6.5 5.7c3.2 1.4 3.9 1.1 4.6 1.1a3.8 3.8 0 0 0 2.5-1.8 3.1 3.1 0 0 0 .2-1.8c-.1-.2-.4-.3-.8-.5z"/></svg>
+        Enviar Pedido pelo WhatsApp
+      </button>
+      <button class="cs-clear" id="csClear">Limpar pedido</button>
+    </div>
+  </div>
+
+  <!-- MOBILE BOTTOM BAR -->
+  <div class="mobile-bar" id="mobileBar" style="display:none">
+    <div class="mb-left">
+      <div class="mb-bag">
+        <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="mb-badge" id="mbBadge">0</span>
+      </div>
+      <div class="mb-texts">
+        <div class="mb-count" id="mbCount">0 itens</div>
+        <div class="mb-total" id="mbTotal">R$ 0,00</div>
+      </div>
+    </div>
+    <button class="mb-go" id="mbGo">Ver pedido</button>
+  </div>
+
+  <!-- React + Babel for the Tweaks panel -->
+  <div id="tweaks" hidden>
+    <div class="twk-hd" id="twkHd"><b>Tweaks</b><button class="twk-x" id="twkX" aria-label="Fechar">✕</button></div>
+    <div class="twk-sect">Fundo do cardápio</div>
+    <div class="sw-row" id="bgRow">
+      <div class="sw" data-bg="creme" style="background:#FFFBF7"><span class="lab">Creme</span></div>
+      <div class="sw" data-bg="trigo" style="background:#F5E8D6"><span class="lab">Trigo</span></div>
+      <div class="sw" data-bg="rose" style="background:#F3E3DD"><span class="lab">Rosé</span></div>
+      <div class="sw" data-bg="oliva" style="background:#EEEDDD"><span class="lab">Oliva</span></div>
+    </div>
+    <div class="twk-sect">Aba do pedido</div>
+    <div class="sw-row" id="panelRow">
+      <div class="sw" data-panel="creme" style="background:#FFF5EC"><span class="lab">Creme</span></div>
+      <div class="sw dark" data-panel="espresso" style="background:#22150e"><span class="lab">Espresso</span></div>
+      <div class="sw dark" data-panel="terracota" style="background:#7a2418"><span class="lab">Terracota</span></div>
+    </div>
+    <div class="hint">💡 Recomendado: fundo <b>Trigo</b> + aba <b>Espresso</b> — mais contraste e apetite.</div>
+  </div>
+
+<script>
+  // ============ PHOTO POOLS (Unsplash, graceful fallback to emoji) ============
+  const PH = {
+    calabresa: 'https://images.unsplash.com/photo-1593504049359-74330189a345?w=500&q=80&auto=format&fit=crop',
+    pepperoni: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=500&q=80&auto=format&fit=crop',
+    margherita: 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=500&q=80&auto=format&fit=crop',
+    pizza1: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500&q=80&auto=format&fit=crop',
+    pizza2: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80&auto=format&fit=crop',
+    pizza3: 'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?w=500&q=80&auto=format&fit=crop',
+    pizza4: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=500&q=80&auto=format&fit=crop',
+    cheese: 'https://images.unsplash.com/photo-1548369937-47519962c11a?w=500&q=80&auto=format&fit=crop',
+    dessertPizza: 'https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=500&q=80&auto=format&fit=crop',
+    chocolate: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500&q=80&auto=format&fit=crop',
+    strawberry: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=500&q=80&auto=format&fit=crop',
+    nutella: 'https://images.unsplash.com/photo-1599785209707-a456fc1337bb?w=500&q=80&auto=format&fit=crop',
+    burger1: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80&auto=format&fit=crop',
+    burger2: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=500&q=80&auto=format&fit=crop',
+    burger3: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=500&q=80&auto=format&fit=crop',
+    soda: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=500&q=80&auto=format&fit=crop',
+    soda2l: 'https://images.unsplash.com/photo-1581006852262-e4307cf6283a?w=500&q=80&auto=format&fit=crop',
+    juice: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?w=500&q=80&auto=format&fit=crop',
+    water: 'https://images.unsplash.com/photo-1560023907-5f339617ea30?w=500&q=80&auto=format&fit=crop',
+  };
+
+  // ============ DATA ============
+  const CATS = [
+    { id: 'all', label: 'Todos' },
+    { id: 'salgadas', label: '🍕 Pizzas Salgadas' },
+    { id: 'doces', label: '🍫 Pizzas Doces' },
+    { id: 'lanches', label: '🍔 Lanches' },
+    { id: 'bebidas', label: '🥤 Bebidas' },
+  ];
+  const MENU = [
+    { id: 's1', cat: 'salgadas', emoji: '🍕', img: PH.calabresa, name: 'Calabresa', desc: 'Calabresa fatiada, cebola roxa e azeitona — clássica e irresistível', price: 45, tag: 'hot', social: '🔥 38 pedidos hoje' },
+    { id: 's2', cat: 'salgadas', emoji: '🍗', img: PH.pizza2, name: 'Frango c/ Catupiry', desc: 'Frango desfiado temperado e catupiry original cremoso', price: 48, social: '❤️ Favorita da casa' },
+    { id: 's3', cat: 'salgadas', emoji: '🍕', img: PH.pizza1, name: 'Portuguesa', desc: 'Presunto, ovo, cebola, pimentão e azeitona — fartura em cada fatia', price: 47, tag: 'hot', social: '🔥 31 pedidos hoje' },
+    { id: 's4', cat: 'salgadas', emoji: '🧀', img: PH.cheese, name: 'Quatro Queijos', desc: 'Mussarela, parmesão, catupiry e cheddar derretidos', price: 52 },
+    { id: 's5', cat: 'salgadas', emoji: '🍅', img: PH.margherita, name: 'Margherita', desc: 'Molho de tomate fresco, mussarela e manjericão perfumado', price: 42 },
+    { id: 's6', cat: 'salgadas', emoji: '🥓', img: PH.pizza3, name: 'Frango c/ Bacon', desc: 'Frango, bacon crocante e cream cheese — combinação viciante', price: 50, tag: 'new' },
+    { id: 's7', cat: 'salgadas', emoji: '🐟', img: PH.pizza4, name: 'Atum', desc: 'Atum selecionado, cebola e azeitonas', price: 46 },
+    { id: 's8', cat: 'salgadas', emoji: '🌴', img: PH.pizza2, name: 'Palmito', desc: 'Palmito pupunha macio, mussarela e tomate', price: 47 },
+    { id: 's9', cat: 'salgadas', emoji: '🥦', img: PH.pizza3, name: 'Brócolis c/ Bacon', desc: 'Brócolis no ponto, bacon e alho dourado no azeite', price: 48 },
+    { id: 's10', cat: 'salgadas', emoji: '🍕', img: PH.pepperoni, name: 'Pepperoni', desc: 'Pepperoni importado levemente curado e mussarela', price: 54, tag: 'new', social: '✨ Nova queridinha' },
+    { id: 'd1', cat: 'doces', emoji: '🍓', img: PH.strawberry, name: 'Chocolate c/ Morango', desc: 'Chocolate ao leite cremoso e morangos frescos fatiados', price: 48, tag: 'hot', social: '🔥 Mais pedida nas doces' },
+    { id: 'd2', cat: 'doces', emoji: '🍫', img: PH.chocolate, name: 'Brigadeiro', desc: 'Brigadeiro gourmet, granulado belga e leite condensado', price: 46 },
+    { id: 'd3', cat: 'doces', emoji: '🍌', img: PH.dessertPizza, name: 'Banana c/ Canela', desc: 'Banana caramelizada, canela e leite condensado', price: 44 },
+    { id: 'd4', cat: 'doces', emoji: '🧀', img: PH.dessertPizza, name: 'Romeu e Julieta', desc: 'Goiabada cremosa derretendo sobre mussarela', price: 44, tag: 'new' },
+    { id: 'd5', cat: 'doces', emoji: '🥥', img: PH.chocolate, name: 'Prestígio', desc: 'Chocolate ao leite e coco ralado fresquinho', price: 46 },
+    { id: 'd6', cat: 'doces', emoji: '🍫', img: PH.nutella, name: 'Nutella c/ Morango', desc: 'Nutella generosa e morangos fatiados — pura indulgência', price: 52, tag: 'hot', social: '🔥 Some rápido!' },
+    { id: 'l1', cat: 'lanches', emoji: '🍔', img: PH.burger1, name: 'X-Bacon Especial', desc: 'Hambúrguer artesanal, bacon crocante, queijo e alface', price: 28, tag: 'hot', social: '🔥 Top dos lanches' },
+    { id: 'l2', cat: 'lanches', emoji: '🍗', img: PH.burger2, name: 'X-Frango', desc: 'Frango empanado sequinho, queijo e maionese da casa', price: 25 },
+    { id: 'l3', cat: 'lanches', emoji: '🥗', img: PH.burger3, name: 'X-Salada', desc: 'Hambúrguer, queijo, alface e tomate', price: 22 },
+    { id: 'b1', cat: 'bebidas', emoji: '🥤', img: PH.soda, name: 'Refrigerante Lata', desc: 'Coca-Cola, Guaraná ou Sprite geladíssimos', price: 6 },
+    { id: 'b2', cat: 'bebidas', emoji: '🥤', img: PH.soda2l, name: 'Refrigerante 2L', desc: 'Coca-Cola ou Guaraná para toda a família', price: 12 },
+    { id: 'b3', cat: 'bebidas', emoji: '🍊', img: PH.juice, name: 'Suco Natural', desc: 'Laranja, limão ou maracujá feitos na hora', price: 10, tag: 'new' },
+    { id: 'b4', cat: 'bebidas', emoji: '💧', img: PH.water, name: 'Água Mineral', desc: '500ml com ou sem gás', price: 4 },
+  ];
+  const CAT_LABEL = { salgadas: '🍕 Pizzas Salgadas', doces: '🍫 Pizzas Doces', lanches: '🍔 Lanches', bebidas: '🥤 Bebidas' };
+  const ORDER = ['salgadas', 'doces', 'lanches', 'bebidas'];
+  const BUMP_IDS = ['b1', 'b2', 'b3', 'd1']; // refrigerantes, suco, doce
+  const DELIVERY = 5;
+  const WA_NUMBER = '5511980794899';
+  // Horário de funcionamento (24h). Ex.: abre 18h, fecha 00h.
+  const OPEN_HOUR = 18, CLOSE_HOUR = 24;
+
+  // promos: combos with a discounted bundle price. items = list of menu ids.
+  const PROMOS = [
+    { id: 'p1', name: 'Combo Casal', desc: '1 Pizza Grande + 2 Refri Lata — noite perfeita a dois', items: ['s1','b1','b1'], price: 52, video: 'assets/foodporn-1.mp4' },
+    { id: 'p2', name: 'Sexta da Família', desc: '2 Pizzas Salgadas + Refri 2L — ninguém passa fome', items: ['s3','s4','b2'], price: 99, img: PH.pizza1 },
+    { id: 'p3', name: 'Doce Encontro', desc: '1 Salgada + 1 Doce — do salgado ao docinho', items: ['s5','d1'], price: 79, img: PH.strawberry },
+    { id: 'p4', name: 'Combo Lanche', desc: '2 X-Bacon + 2 Refri Lata — a pedida da galera', items: ['l1','l1','b1','b1'], price: 62, img: PH.burger1 },
+  ];
+
+  let activeCat = 'all', query = '';
+  let cart = {};
+  try { cart = JSON.parse(localStorage.getItem('pfs_cart') || '{}'); } catch (e) { cart = {}; }
+  function saveCart() { try { localStorage.setItem('pfs_cart', JSON.stringify(cart)); } catch (e) {} }
+  // estado do checkout compartilhado entre desktop e mobile
+  const checkout = { name: '', addr: '', pay: '', change: '', obs: '' };
+  try { Object.assign(checkout, JSON.parse(localStorage.getItem('pfs_checkout') || '{}')); } catch (e) {}
+  function saveCheckout() { try { localStorage.setItem('pfs_checkout', JSON.stringify(checkout)); } catch (e) {} }
+  const BRL = n => 'R$ ' + n.toFixed(2).replace('.', ',');
+  // promos become sellable units (single line, bundled price)
+  const PROMO_UNITS = PROMOS.map(p => ({ id: p.id, name: p.name, price: p.price, emoji: '🎁', isPromo: true, items: p.items }));
+  const SELLABLE = MENU.concat(PROMO_UNITS);
+  const byId = id => SELLABLE.find(m => m.id === id);
+
+  // ============ CATEGORIES ============
+  const catsEl = document.getElementById('cats');
+  CATS.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'chip' + (c.id === 'all' ? ' active' : '');
+    b.textContent = c.label; b.dataset.cat = c.id;
+    b.onclick = () => { activeCat = c.id; document.querySelectorAll('.chip').forEach(x => x.classList.toggle('active', x.dataset.cat === c.id)); renderMenu(); renderPromos(); };
+    catsEl.appendChild(b);
+  });
+
+  // ============ PROMOS ============
+  const promoWrap = document.getElementById('promoWrap');
+  const promoRow = document.getElementById('promoRow');
+  function renderPromos() {
+    const show = activeCat === 'all' && !query.trim();
+    promoWrap.style.display = show ? 'block' : 'none';
+    if (!show || promoRow.childElementCount) return;
+    PROMOS.forEach(p => {
+      const full = p.items.reduce((s, id) => s + byId(id).price, 0);
+      const media = p.video
+        ? `<video src="${p.video}" autoplay muted loop playsinline preload="metadata"></video>`
+        : (p.img ? `<img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async" onerror="this.remove()" />` : '');
+      const off = Math.round((1 - p.price / full) * 100);
+      const card = document.createElement('div');
+      card.className = 'promo-card';
+      card.innerHTML = `
+        <div class="promo-media">${media}${off > 0 ? `<span class="pct">-${off}%</span>` : ''}</div>
+        <div class="promo-info">
+          <div class="pname">${p.name}</div>
+          <div class="pdesc">${p.desc}</div>
+          <div class="pfoot">
+            <div class="pprices">
+              ${off > 0 ? `<span class="pold">${BRL(full)}</span>` : ''}
+              <span class="pnew"><small>R$</small> ${p.price.toFixed(2).replace('.', ',')}</span>
+            </div>
+            <button class="padd" aria-label="Adicionar ${p.name}">+ Adicionar</button>
+          </div>
+        </div>`;
+      const add = () => addItem(p.id);
+      card.querySelector('.padd').onclick = (e) => { e.stopPropagation(); add(); };
+      card.onclick = add;
+      promoRow.appendChild(card);
+    });
+  }
+
+  // ============ MENU ============
+  const menuEl = document.getElementById('menu');
+  function renderMenu() {
+    const q = query.trim().toLowerCase();
+    const filtered = MENU.filter(it => (activeCat === 'all' || it.cat === activeCat) && (!q || it.name.toLowerCase().includes(q) || it.desc.toLowerCase().includes(q)));
+    menuEl.innerHTML = '';
+    if (!filtered.length) {
+      menuEl.innerHTML = '<div class="empty-state"><div class="big">🔍</div><p>Nenhum item encontrado.<br>Tente outra busca ou categoria.</p></div>';
+      return;
+    }
+    let idx = 0;
+    ORDER.forEach(catId => {
+      const items = filtered.filter(i => i.cat === catId);
+      if (!items.length) return;
+      const head = document.createElement('div');
+      head.className = 'section-head';
+      head.innerHTML = `<span class="bar"></span><h2>${CAT_LABEL[catId]}</h2><span class="count">· ${items.length} ${items.length === 1 ? 'item' : 'itens'}</span>`;
+      menuEl.appendChild(head);
+      const grid = document.createElement('div');
+      grid.className = 'grid';
+      items.forEach(item => { const c = makeCard(item); c.style.animationDelay = (idx++ * 0.03) + 's'; grid.appendChild(c); });
+      menuEl.appendChild(grid);
+    });
+  }
+
+  function makeCard(item) {
+    const el = document.createElement('div');
+    el.className = 'card cat-' + item.cat;
+    el.dataset.id = item.id;
+    const tagHtml = item.tag === 'hot' ? '<span class="tag hot">🔥 Mais pedido</span>'
+                  : item.tag === 'new' ? '<span class="tag new">✨ Novidade</span>' : '';
+    const photoHtml = item.img ? `<img class="photo" src="${item.img}" alt="${item.name}" loading="lazy" decoding="async" onerror="this.remove()" /><div class="shade"></div>` : '';
+    const socialHtml = item.social ? `<span class="social">${item.social}</span>` : '';
+    el.innerHTML = `
+      <div class="card-img">
+        <span class="emoji">${item.emoji}</span>
+        ${photoHtml}
+        ${tagHtml}
+        ${socialHtml}
+        <span class="in-cart-flag" data-flag></span>
+      </div>
+      <div class="card-body">
+        <h3>${item.name}</h3>
+        <p>${item.desc}</p>
+      </div>
+      <div class="card-foot">
+        <div class="price"><small>R$</small> ${item.price.toFixed(2).replace('.', ',')}</div>
+        <button class="add-btn" aria-label="Adicionar ${item.name}">+</button>
+      </div>`;
+    const btn = el.querySelector('.add-btn');
+    btn.onclick = (e) => { e.stopPropagation(); btn.classList.remove('bounce'); void btn.offsetWidth; btn.classList.add('bounce'); addItem(item.id); };
+    el.onclick = () => addItem(item.id);
+    return el;
+  }
+
+  // ============ CART ============
+  function addItem(id) { cart[id] = (cart[id] || 0) + 1; saveCart(); renderCart(); bumpBadge(); }
+  function decItem(id) { if (!cart[id]) return; cart[id]--; if (cart[id] <= 0) delete cart[id]; saveCart(); renderCart(); }
+  function clearCart() { for (const k in cart) delete cart[k]; saveCart(); renderCart(); }
+
+  // Desktop elements
+  const orderList = document.getElementById('orderList');
+  const badge = document.getElementById('badge');
+  const subtotalEl = document.getElementById('subtotal');
+  const totalEl = document.getElementById('total');
+  const waBtn = document.getElementById('waBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const bumpsEl = document.getElementById('bumps');
+  const bumpRow = document.getElementById('bumpRow');
+
+  // Mobile elements
+  const mobileBar = document.getElementById('mobileBar');
+  const mbCount = document.getElementById('mbCount');
+  const mbTotal = document.getElementById('mbTotal');
+  const mbBadge = document.getElementById('mbBadge');
+  const mbGo = document.getElementById('mbGo');
+  const cartScreen = document.getElementById('cartScreen');
+  const csBody = document.getElementById('csBody');
+  const csBadge = document.getElementById('csBadge');
+  const csWaBtn = document.getElementById('csWaBtn');
+  const csClear = document.getElementById('csClear');
+  const csBack = document.getElementById('csBack');
+
+  const isMobile = () => window.innerWidth <= 768;
+  const entries = () => Object.keys(cart).map(id => ({ item: byId(id), qty: cart[id] }));
+  const totalQty = () => Object.values(cart).reduce((a, b) => a + b, 0);
+
+  // Open/close cart screen (mobile)
+  function openCart() { cartScreen.classList.add('open'); document.body.style.overflow = 'hidden'; renderCartScreen(); }
+  function closeCart() { cartScreen.classList.remove('open'); document.body.style.overflow = ''; }
+  mbGo.addEventListener('click', openCart);
+  csBack.addEventListener('click', closeCart);
+
+  // ── DESKTOP: render bumps ──
+  function renderBumps() {
+    if (!totalQty()) { bumpsEl.style.display = 'none'; return; }
+    const suggestions = BUMP_IDS.map(byId).filter(it => it && !cart[it.id]);
+    if (!suggestions.length) { bumpsEl.style.display = 'none'; return; }
+    bumpsEl.style.display = 'block';
+    bumpRow.innerHTML = '';
+    suggestions.forEach(it => {
+      const c = document.createElement('div');
+      c.className = 'bump-card';
+      const ph = it.img ? `<img src="${it.img}" alt="${it.name}" loading="lazy" decoding="async" onerror="this.remove()" />` : '';
+      c.innerHTML = `<div class="bimg">${it.emoji}${ph}</div><div class="binfo"><div class="bn">${it.name}</div><div class="bp"><span class="bprice">${BRL(it.price)}</span><button class="badd" type="button">+</button></div></div>`;
+      c.querySelector('.badd').addEventListener('click', e => { e.stopPropagation(); addItem(it.id); });
+      c.addEventListener('click', () => addItem(it.id));
+      bumpRow.appendChild(c);
+    });
+  }
+
+  // ── DESKTOP: render cart panel ──
+  function renderDesktopCart() {
+    const list = entries(), qty = totalQty();
+    orderList.innerHTML = '';
+    if (!list.length) {
+      orderList.innerHTML = '<div class="order-empty"><div class="ic">🍕</div><div class="t1">Seu carrinho está vazio</div><div class="t2">Escolha os itens deliciosos do cardápio</div></div>';
+      badge.style.display = 'none';
+      waBtn.disabled = true; clearBtn.style.display = 'none';
+    } else {
+      list.forEach(({ item, qty: q }) => {
+        const line = document.createElement('div');
+        line.className = 'line';
+        line.innerHTML = `<div class="qty"><button class="dec" type="button">−</button><span class="n">${q}</span><button class="inc" type="button">+</button></div><div class="line-info"><div class="nm">${item.name}</div><div class="unit">${BRL(item.price)} cada</div></div><div class="line-right"><div class="line-total">${BRL(item.price * q)}</div><button class="del-btn" type="button">remover</button></div>`;
+        line.querySelector('.dec').addEventListener('click', e => { e.stopPropagation(); decItem(item.id); });
+        line.querySelector('.inc').addEventListener('click', e => { e.stopPropagation(); addItem(item.id); });
+        line.querySelector('.del-btn').addEventListener('click', e => { e.stopPropagation(); delete cart[item.id]; saveCart(); renderCart(); });
+        orderList.appendChild(line);
+      });
+      badge.style.display = 'inline-flex'; badge.textContent = qty;
+      waBtn.disabled = false; clearBtn.style.display = 'block';
+    }
+    renderBumps();
+    const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
+    const total = list.length ? subtotal + DELIVERY : 0;
+    subtotalEl.textContent = BRL(subtotal);
+    totalEl.textContent = BRL(total);
+  }
+
+  // ── MOBILE: render cart screen ──
+  function renderCartScreen() {
+    const list = entries(), qty = totalQty();
+    csBadge.textContent = qty;
+    csBody.innerHTML = '';
+
+    if (!list.length) {
+      csBody.innerHTML = '<div class="cs-empty"><div class="ic">🍕</div><div class="t1">Carrinho vazio</div><div class="t2">Adicione itens do cardápio</div></div>';
+      csWaBtn.disabled = true;
+      return;
+    }
+
+    // Items card
+    const card = document.createElement('div');
+    card.className = 'cs-card';
+    list.forEach(({ item, qty: q }) => {
+      const line = document.createElement('div');
+      line.className = 'cs-line';
+      line.innerHTML = `
+        <div class="cs-qty">
+          <button class="cs-dec" type="button">−</button>
+          <span class="cs-n">${q}</span>
+          <button class="cs-inc inc" type="button">+</button>
+        </div>
+        <div class="cs-name">
+          <div class="nm">${item.name}</div>
+          <div class="un">${BRL(item.price)} cada</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+          <div class="cs-price">${BRL(item.price * q)}</div>
+          <button class="cs-del" type="button" aria-label="Remover">
+            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+          </button>
+        </div>`;
+      line.querySelector('.cs-dec').addEventListener('click', () => { decItem(item.id); renderCartScreen(); });
+      line.querySelector('.cs-inc').addEventListener('click', () => { addItem(item.id); renderCartScreen(); });
+      line.querySelector('.cs-del').addEventListener('click', () => { delete cart[item.id]; saveCart(); renderCart(); renderCartScreen(); });
+      card.appendChild(line);
+    });
+    csBody.appendChild(card);
+
+    // Bumps
+    const suggestions = BUMP_IDS.map(byId).filter(it => it && !cart[it.id]);
+    if (suggestions.length) {
+      const bt = document.createElement('div');
+      bt.className = 'cs-bumps-title';
+      bt.textContent = '✨ Que tal completar o pedido?';
+      csBody.appendChild(bt);
+      const br = document.createElement('div');
+      br.className = 'cs-bump-row';
+      suggestions.forEach(it => {
+        const bc = document.createElement('div');
+        bc.className = 'cs-bump-card';
+        const ph = it.img ? `<img src="${it.img}" alt="" loading="lazy" decoding="async" onerror="this.remove()" />` : '';
+        bc.innerHTML = `<div class="cs-bump-img">${it.emoji}${ph}</div><div class="cs-bump-info"><div class="cs-bump-name">${it.name}</div><div class="cs-bump-foot"><span class="cs-bump-price">${BRL(it.price)}</span><button class="cs-bump-add" type="button">+</button></div></div>`;
+        bc.querySelector('.cs-bump-add').addEventListener('click', e => { e.stopPropagation(); addItem(it.id); renderCartScreen(); });
+        br.appendChild(bc);
+      });
+      csBody.appendChild(br);
+    }
+
+    // Summary
+    const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
+    const total = subtotal + DELIVERY;
+    const summary = document.createElement('div');
+    summary.className = 'cs-summary';
+    summary.innerHTML = `<div class="cs-srow"><span>Subtotal</span><span>${BRL(subtotal)}</span></div><div class="cs-srow"><span>Taxa de entrega</span><span>${BRL(DELIVERY)}</span></div><div class="cs-srow total"><span>Total</span><span class="tv">${BRL(total)}</span></div>`;
+    csBody.appendChild(summary);
+
+    // Checkout (nome, endereço, pagamento, observações)
+    const ck = document.createElement('div');
+    ck.className = 'cs-addr';
+    ck.innerHTML = `
+      <label>Seu nome</label>
+      <input class="ck-name" type="text" autocomplete="name" placeholder="Como podemos te chamar?" style="margin-bottom:12px" />
+      <label>Endereço de entrega</label>
+      <input class="ck-addr" type="text" autocomplete="street-address" placeholder="Rua, número, bairro..." style="margin-bottom:12px" />
+      <label>Pagamento</label>
+      <div class="pay-row" data-payrow>
+        <button type="button" class="pay-chip" data-pay="Pix">💠 Pix</button>
+        <button type="button" class="pay-chip" data-pay="Cartão">💳 Cartão</button>
+        <button type="button" class="pay-chip" data-pay="Dinheiro">💵 Dinheiro</button>
+      </div>
+      <input class="ck-change" type="text" inputmode="numeric" placeholder="Troco para quanto?" style="display:none;margin-top:8px;margin-bottom:12px" />
+      <label style="margin-top:12px">Observações (opcional)</label>
+      <input class="ck-obs" type="text" placeholder="Sem cebola, borda recheada..." />`;
+    csBody.appendChild(ck);
+    bindCheckoutFields(ck);
+
+    csWaBtn.disabled = false;
+  }
+
+  // ── SHARED: render cart (called on every change) ──
+  function renderCart() {
+    // Update card badges on menu
+    document.querySelectorAll('.card').forEach(c => {
+      const f = c.querySelector('[data-flag]');
+      if (!f) return;
+      if (cart[c.dataset.id]) { c.classList.add('has-qty'); f.textContent = cart[c.dataset.id]; }
+      else c.classList.remove('has-qty');
+    });
+
+    const list = entries(), qty = totalQty();
+
+    // Mobile bottom bar
+    if (isMobile()) {
+      if (qty > 0) {
+        mobileBar.style.display = 'flex';
+        mbBadge.textContent = qty;
+        mbCount.textContent = `${qty} ${qty === 1 ? 'item' : 'itens'}`;
+        const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
+        mbTotal.textContent = BRL(subtotal + DELIVERY);
+        if (cartScreen.classList.contains('open')) renderCartScreen();
+      } else {
+        mobileBar.style.display = 'none';
+        closeCart();
+      }
+    } else {
+      mobileBar.style.display = 'none';
+      renderDesktopCart();
+    }
+  }
+
+  function bumpBadge() { badge.classList.remove('bump'); void badge.offsetWidth; badge.classList.add('bump'); }
+
+  clearBtn.addEventListener('click', clearCart);
+  csClear.addEventListener('click', () => { clearCart(); closeCart(); });
+
+  // ── CHECKOUT: sincronização dos campos (desktop + mobile) ──
+  function bindCheckoutFields(root) {
+    const map = { '.ck-name': 'name', '.ck-addr': 'addr', '.ck-change': 'change', '.ck-obs': 'obs' };
+    Object.entries(map).forEach(([sel, key]) => {
+      const el = root.querySelector(sel);
+      if (!el) return;
+      el.value = checkout[key];
+      el.addEventListener('input', () => { checkout[key] = el.value; el.classList.remove('field-err'); saveCheckout(); });
+    });
+    const payRow = root.querySelector('[data-payrow]');
+    if (payRow) {
+      const chips = payRow.querySelectorAll('.pay-chip');
+      const changeEl = root.querySelector('.ck-change');
+      const sync = () => {
+        chips.forEach(c => c.classList.toggle('active', c.dataset.pay === checkout.pay));
+        if (changeEl) changeEl.style.display = checkout.pay === 'Dinheiro' ? 'block' : 'none';
+      };
+      chips.forEach(c => c.addEventListener('click', () => { checkout.pay = c.dataset.pay; saveCheckout(); sync(); }));
+      sync();
+    }
+  }
+  bindCheckoutFields(document.querySelector('.order-foot'));
+
+  // WhatsApp sender
+  function buildMsg() {
+    const list = entries();
+    const subtotal = list.reduce((s, { item, qty: q }) => s + item.price * q, 0);
+    const total = subtotal + DELIVERY;
+    const NL = String.fromCharCode(10);
+    let msg = '*Pedido — Pizzaria Família Silva* ' + String.fromCodePoint(0x1F355) + NL + NL;
+    if (checkout.name) msg += 'Cliente: ' + checkout.name + NL;
+    if (checkout.addr) msg += 'Entrega: ' + checkout.addr + NL;
+    if (checkout.pay) msg += 'Pagamento: ' + checkout.pay + (checkout.pay === 'Dinheiro' && checkout.change ? ' (troco para R$ ' + checkout.change + ')' : '') + NL;
+    msg += NL + '*Itens:*' + NL;
+    list.forEach(({ item, qty: q }) => {
+      msg += q + 'x ' + item.name + ' — ' + BRL(item.price * q) + NL;
+      if (item.isPromo && item.items) {
+        const parts = item.items.reduce((m, id) => { m[id] = (m[id] || 0) + 1; return m; }, {});
+        msg += '   (' + Object.entries(parts).map(([id, n]) => n + 'x ' + byId(id).name).join(', ') + ')' + NL;
+      }
+    });
+    if (checkout.obs) msg += NL + 'Obs: ' + checkout.obs + NL;
+    msg += NL + 'Subtotal: ' + BRL(subtotal) + NL + 'Entrega: ' + BRL(DELIVERY) + NL + '*TOTAL: ' + BRL(total) + '*' + NL + NL + 'Aguardo confirmação, obrigado!';
+    return msg;
+  }
+
+  function validateCheckout(root) {
+    let ok = true, firstBad = null;
+    [['.ck-name', 'name'], ['.ck-addr', 'addr']].forEach(([sel, key]) => {
+      const el = root.querySelector(sel);
+      if (!checkout[key].trim()) { ok = false; if (el) { el.classList.add('field-err'); if (!firstBad) firstBad = el; } }
+    });
+    if (firstBad) firstBad.focus();
+    return ok;
+  }
+
+  function sendWA(rootSel) {
+    if (!entries().length) return;
+    const root = document.querySelector(rootSel);
+    if (!validateCheckout(root)) return;
+    window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(buildMsg()), '_blank');
+  }
+
+  waBtn.addEventListener('click', () => sendWA('.order-foot'));
+  csWaBtn.addEventListener('click', () => sendWA('#csBody'));
+
+  // ============ SEARCH ============
+  document.getElementById('search').addEventListener('input', e => { query = e.target.value; renderMenu(); renderPromos(); renderCart(); });
+
+  // ============ MOBILE SHEET ============
+  // Handled by mbGo/csBack listeners above
+
+  // re-render ao mudar entre mobile/desktop (rotação, redimensionamento)
+  let lastMobile = isMobile(), rzTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(rzTimer);
+    rzTimer = setTimeout(() => {
+      if (isMobile() !== lastMobile) { lastMobile = isMobile(); if (!isMobile()) closeCart(); renderCart(); }
+    }, 150);
+  });
+
+  // badge dinâmico de aberto/fechado
+  function updateOpenBadge() {
+    const badge = document.getElementById('openBadge');
+    const text = document.getElementById('openText');
+    if (!badge || !text) return;
+    const h = new Date().getHours();
+    const open = CLOSE_HOUR > OPEN_HOUR ? (h >= OPEN_HOUR && h < CLOSE_HOUR) : (h >= OPEN_HOUR || h < CLOSE_HOUR % 24);
+    badge.classList.toggle('closed', !open);
+    text.textContent = open
+      ? `⏰ Aberto até ${String(CLOSE_HOUR % 24).padStart(2, '0')}h`
+      : `😴 Fechado · abre às ${OPEN_HOUR}h`;
+  }
+  updateOpenBadge();
+  setInterval(updateOpenBadge, 60000);
+
+  renderMenu();
+  renderPromos();
+  renderCart();
+
+  // ============ TWEAKS ============
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "bg": "rose",
+    "panel": "terracota"
+  }/*EDITMODE-END*/;
+
+  const tweaks = Object.assign({}, TWEAK_DEFAULTS);
+  try { Object.assign(tweaks, JSON.parse(localStorage.getItem('pfs_tweaks') || '{}')); } catch (e) {}
+
+  const twkPanel = document.getElementById('tweaks');
+  const bgRow = document.getElementById('bgRow');
+  const panelRow = document.getElementById('panelRow');
+
+  function applyTweaks() {
+    document.body.dataset.bg = tweaks.bg;
+    document.body.dataset.panel = tweaks.panel;
+    bgRow.querySelectorAll('.sw').forEach(s => s.classList.toggle('active', s.dataset.bg === tweaks.bg));
+    panelRow.querySelectorAll('.sw').forEach(s => s.classList.toggle('active', s.dataset.panel === tweaks.panel));
+  }
+
+  function setTweak(key, val) {
+    tweaks[key] = val;
+    applyTweaks();
+    try { localStorage.setItem('pfs_tweaks', JSON.stringify(tweaks)); } catch (e) {}
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { [key]: val } }, '*');
+  }
+
+  bgRow.querySelectorAll('.sw').forEach(s => s.onclick = () => setTweak('bg', s.dataset.bg));
+  panelRow.querySelectorAll('.sw').forEach(s => s.onclick = () => setTweak('panel', s.dataset.panel));
+  applyTweaks();
+
+  // host protocol
+  document.getElementById('twkX').onclick = () => { twkPanel.hidden = true; window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*'); };
+  window.addEventListener('message', (e) => {
+    const t = e?.data?.type;
+    if (t === '__activate_edit_mode') twkPanel.hidden = false;
+    else if (t === '__deactivate_edit_mode') twkPanel.hidden = true;
+  });
+  window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+
+  // drag the panel by its header
+  (function () {
+    const hd = document.getElementById('twkHd');
+    let dx = 0, dy = 0, drag = false;
+    hd.addEventListener('pointerdown', (e) => {
+      drag = true; const r = twkPanel.getBoundingClientRect();
+      dx = e.clientX - r.left; dy = e.clientY - r.top; hd.setPointerCapture(e.pointerId);
+    });
+    hd.addEventListener('pointermove', (e) => {
+      if (!drag) return;
+      twkPanel.style.left = (e.clientX - dx) + 'px'; twkPanel.style.top = (e.clientY - dy) + 'px';
+      twkPanel.style.right = 'auto'; twkPanel.style.bottom = 'auto';
+    });
+    hd.addEventListener('pointerup', () => { drag = false; });
+  })();</script>
+</body>
 </html>
