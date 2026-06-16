@@ -3,30 +3,52 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 
 // ── Dados idênticos ao index.html original ──────────────────────────────────
-const MENU = [
-  { id: 's1', cat: 'salgadas', emoji: '🍕', name: 'Calabresa', desc: 'Calabresa fatiada, cebola e azeitonas sobre molho de tomate', price: 45, tag: 'hot', social: '🔥 Mais pedida' },
-  { id: 's2', cat: 'salgadas', emoji: '🍗', name: 'Frango c/ Catupiry', desc: 'Frango desfiado temperado e catupiry original cremoso', price: 48, tag: null, social: '❤️ Favorita da casa' },
-  { id: 's3', cat: 'salgadas', emoji: '🍕', name: 'Portuguesa', desc: 'Presunto, ovo, cebola, pimentão e azeitona — fartura em cada fatia', price: 47, tag: 'hot', social: '🔥 31 pedidos hoje' },
-  { id: 's4', cat: 'salgadas', emoji: '🧀', name: 'Quatro Queijos', desc: 'Mussarela, parmesão, catupiry e cheddar derretidos', price: 52, tag: null, social: null },
-  { id: 's5', cat: 'salgadas', emoji: '🍅', name: 'Margherita', desc: 'Molho de tomate fresco, mussarela e manjericão perfumado', price: 42, tag: null, social: null },
-  { id: 's6', cat: 'salgadas', emoji: '🥓', name: 'Frango c/ Bacon', desc: 'Frango, bacon crocante e cream cheese — combinação viciante', price: 50, tag: 'new', social: null },
-  { id: 's7', cat: 'salgadas', emoji: '🐟', name: 'Atum', desc: 'Atum selecionado, cebola e azeitonas', price: 46, tag: null, social: null },
-  { id: 's8', cat: 'salgadas', emoji: '🌴', name: 'Palmito', desc: 'Palmito pupunha macio, mussarela e tomate', price: 47, tag: null, social: null },
-  { id: 's9', cat: 'salgadas', emoji: '🥦', name: 'Brócolis c/ Bacon', desc: 'Brócolis no ponto, bacon e alho dourado no azeite', price: 48, tag: null, social: null },
-  { id: 's10', cat: 'salgadas', emoji: '🍕', name: 'Pepperoni', desc: 'Pepperoni importado levemente curado e mussarela', price: 54, tag: 'new', social: '✨ Nova queridinha' },
-  { id: 'd1', cat: 'doces', emoji: '🍓', name: 'Chocolate c/ Morango', desc: 'Chocolate ao leite cremoso e morangos frescos fatiados', price: 48, tag: 'hot', social: '🔥 Mais pedida nas doces' },
-  { id: 'd2', cat: 'doces', emoji: '🍫', name: 'Brigadeiro', desc: 'Brigadeiro gourmet, granulado belga e leite condensado', price: 46, tag: null, social: null },
-  { id: 'd3', cat: 'doces', emoji: '🍌', name: 'Banana c/ Canela', desc: 'Banana caramelizada, canela e leite condensado', price: 44, tag: null, social: null },
-  { id: 'd4', cat: 'doces', emoji: '🧀', name: 'Romeu e Julieta', desc: 'Goiabada cremosa derretendo sobre mussarela', price: 44, tag: 'new', social: null },
-  { id: 'd5', cat: 'doces', emoji: '🥥', name: 'Prestígio', desc: 'Chocolate ao leite e coco ralado fresquinho', price: 46, tag: null, social: null },
-  { id: 'd6', cat: 'doces', emoji: '🍫', name: 'Nutella c/ Morango', desc: 'Nutella generosa e morangos fatiados — pura indulgência', price: 52, tag: 'hot', social: '🔥 Some rápido!' },
-  { id: 'l1', cat: 'lanches', emoji: '🍔', name: 'X-Bacon Especial', desc: 'Hambúrguer artesanal, bacon crocante, queijo e alface', price: 28, tag: 'hot', social: '🔥 Top dos lanches' },
-  { id: 'l2', cat: 'lanches', emoji: '🍗', name: 'X-Frango', desc: 'Frango empanado sequinho, queijo e maionese da casa', price: 25, tag: null, social: null },
-  { id: 'l3', cat: 'lanches', emoji: '🥗', name: 'X-Salada', desc: 'Hambúrguer, queijo, alface e tomate', price: 22, tag: null, social: null },
-  { id: 'b1', cat: 'bebidas', emoji: '🥤', name: 'Refrigerante Lata', desc: 'Coca-Cola, Guaraná ou Sprite geladíssimos', price: 6, tag: null, social: null },
-  { id: 'b2', cat: 'bebidas', emoji: '🥤', name: 'Refrigerante 2L', desc: 'Coca-Cola ou Guaraná para toda a família', price: 12, tag: null, social: null },
-  { id: 'b3', cat: 'bebidas', emoji: '🍊', name: 'Suco Natural', desc: 'Laranja, limão ou maracujá feitos na hora', price: 10, tag: 'new', social: null },
-  { id: 'b4', cat: 'bebidas', emoji: '💧', name: 'Água Mineral', desc: '500ml com ou sem gás', price: 4, tag: null, social: null },
+const PH = {
+  calabresa: 'https://images.unsplash.com/photo-1593504049359-74330189a345?w=500&q=80&auto=format&fit=crop',
+  pepperoni: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=500&q=80&auto=format&fit=crop',
+  margherita: 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=500&q=80&auto=format&fit=crop',
+  pizza1: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500&q=80&auto=format&fit=crop',
+  pizza2: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80&auto=format&fit=crop',
+  pizza3: 'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?w=500&q=80&auto=format&fit=crop',
+  pizza4: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=500&q=80&auto=format&fit=crop',
+  cheese: 'https://images.unsplash.com/photo-1548369937-47519962c11a?w=500&q=80&auto=format&fit=crop',
+  dessertPizza: 'https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=500&q=80&auto=format&fit=crop',
+  chocolate: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500&q=80&auto=format&fit=crop',
+  strawberry: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=500&q=80&auto=format&fit=crop',
+  nutella: 'https://images.unsplash.com/photo-1599785209707-a456fc1337bb?w=500&q=80&auto=format&fit=crop',
+  burger1: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80&auto=format&fit=crop',
+  burger2: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=500&q=80&auto=format&fit=crop',
+  burger3: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=500&q=80&auto=format&fit=crop',
+  soda: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=500&q=80&auto=format&fit=crop',
+  soda2l: 'https://images.unsplash.com/photo-1581006852262-e4307cf6283a?w=500&q=80&auto=format&fit=crop',
+  juice: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?w=500&q=80&auto=format&fit=crop',
+  water: 'https://images.unsplash.com/photo-1560023907-5f339617ea30?w=500&q=80&auto=format&fit=crop',
+}
+
+const MENU: Array<{id:string;cat:string;emoji:string;name:string;desc:string;price:number;tag:string|null;social:string|null;img:string}> = [
+  { id: 's1', img: PH.calabresa, cat: 'salgadas', emoji: '🍕', name: 'Calabresa', desc: 'Calabresa fatiada, cebola e azeitonas sobre molho de tomate', price: 45, tag: 'hot', social: '🔥 Mais pedida' },
+  { id: 's2', img: PH.pizza2, cat: 'salgadas', emoji: '🍗', name: 'Frango c/ Catupiry', desc: 'Frango desfiado temperado e catupiry original cremoso', price: 48, tag: null, social: '❤️ Favorita da casa' },
+  { id: 's3', img: PH.pizza1, cat: 'salgadas', emoji: '🍕', name: 'Portuguesa', desc: 'Presunto, ovo, cebola, pimentão e azeitona — fartura em cada fatia', price: 47, tag: 'hot', social: '🔥 31 pedidos hoje' },
+  { id: 's4', img: PH.cheese, cat: 'salgadas', emoji: '🧀', name: 'Quatro Queijos', desc: 'Mussarela, parmesão, catupiry e cheddar derretidos', price: 52, tag: null, social: null },
+  { id: 's5', img: PH.margherita, cat: 'salgadas', emoji: '🍅', name: 'Margherita', desc: 'Molho de tomate fresco, mussarela e manjericão perfumado', price: 42, tag: null, social: null },
+  { id: 's6', img: PH.pizza3, cat: 'salgadas', emoji: '🥓', name: 'Frango c/ Bacon', desc: 'Frango, bacon crocante e cream cheese — combinação viciante', price: 50, tag: 'new', social: null },
+  { id: 's7', img: PH.pizza4, cat: 'salgadas', emoji: '🐟', name: 'Atum', desc: 'Atum selecionado, cebola e azeitonas', price: 46, tag: null, social: null },
+  { id: 's8', img: PH.pizza2, cat: 'salgadas', emoji: '🌴', name: 'Palmito', desc: 'Palmito pupunha macio, mussarela e tomate', price: 47, tag: null, social: null },
+  { id: 's9', img: PH.pizza3, cat: 'salgadas', emoji: '🥦', name: 'Brócolis c/ Bacon', desc: 'Brócolis no ponto, bacon e alho dourado no azeite', price: 48, tag: null, social: null },
+  { id: 's10', img: PH.pepperoni, cat: 'salgadas', emoji: '🍕', name: 'Pepperoni', desc: 'Pepperoni importado levemente curado e mussarela', price: 54, tag: 'new', social: '✨ Nova queridinha' },
+  { id: 'd1', img: PH.strawberry, cat: 'doces', emoji: '🍓', name: 'Chocolate c/ Morango', desc: 'Chocolate ao leite cremoso e morangos frescos fatiados', price: 48, tag: 'hot', social: '🔥 Mais pedida nas doces' },
+  { id: 'd2', img: PH.chocolate, cat: 'doces', emoji: '🍫', name: 'Brigadeiro', desc: 'Brigadeiro gourmet, granulado belga e leite condensado', price: 46, tag: null, social: null },
+  { id: 'd3', img: PH.dessertPizza, cat: 'doces', emoji: '🍌', name: 'Banana c/ Canela', desc: 'Banana caramelizada, canela e leite condensado', price: 44, tag: null, social: null },
+  { id: 'd4', img: PH.dessertPizza, cat: 'doces', emoji: '🧀', name: 'Romeu e Julieta', desc: 'Goiabada cremosa derretendo sobre mussarela', price: 44, tag: 'new', social: null },
+  { id: 'd5', img: PH.chocolate, cat: 'doces', emoji: '🥥', name: 'Prestígio', desc: 'Chocolate ao leite e coco ralado fresquinho', price: 46, tag: null, social: null },
+  { id: 'd6', img: PH.nutella, cat: 'doces', emoji: '🍫', name: 'Nutella c/ Morango', desc: 'Nutella generosa e morangos fatiados — pura indulgência', price: 52, tag: 'hot', social: '🔥 Some rápido!' },
+  { id: 'l1', img: PH.burger1, cat: 'lanches', emoji: '🍔', name: 'X-Bacon Especial', desc: 'Hambúrguer artesanal, bacon crocante, queijo e alface', price: 28, tag: 'hot', social: '🔥 Top dos lanches' },
+  { id: 'l2', img: PH.burger2, cat: 'lanches', emoji: '🍗', name: 'X-Frango', desc: 'Frango empanado sequinho, queijo e maionese da casa', price: 25, tag: null, social: null },
+  { id: 'l3', img: PH.burger3, cat: 'lanches', emoji: '🥗', name: 'X-Salada', desc: 'Hambúrguer, queijo, alface e tomate', price: 22, tag: null, social: null },
+  { id: 'b1', img: PH.soda, cat: 'bebidas', emoji: '🥤', name: 'Refrigerante Lata', desc: 'Coca-Cola, Guaraná ou Sprite geladíssimos', price: 6, tag: null, social: null },
+  { id: 'b2', img: PH.soda2l, cat: 'bebidas', emoji: '🥤', name: 'Refrigerante 2L', desc: 'Coca-Cola ou Guaraná para toda a família', price: 12, tag: null, social: null },
+  { id: 'b3', img: PH.juice, cat: 'bebidas', emoji: '🍊', name: 'Suco Natural', desc: 'Laranja, limão ou maracujá feitos na hora', price: 10, tag: 'new', social: null },
+  { id: 'b4', img: PH.water, cat: 'bebidas', emoji: '💧', name: 'Água Mineral', desc: '500ml com ou sem gás', price: 4, tag: null, social: null },
 ]
 
 const CATS = [
@@ -629,10 +651,12 @@ body[data-panel="espresso"]{--panel-bg:rgba(34,21,14,0.84);--panel-text:#FFF1E0;
                           onClick={() => hasOptions(item) ? openProduct(item) : (addLine(item.id), showToast(`${item.name} adicionado ✅`))}>
                           <div className="card-img">
                             <span className="emoji">{item.emoji}</span>
-                            {item.tag==='hot' && <span className="tag hot">🔥 Mais pedido</span>}
-                            {item.tag==='new' && <span className="tag new">✨ Novidade</span>}
-                            {item.social && <span className="social">{item.social}</span>}
-                            <span className="in-cart-flag">{q}</span>
+                            {item.img && <img src={item.img} alt={item.name} style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',zIndex:0}} loading="lazy" onError={(e)=>{(e.target as HTMLImageElement).style.display='none'}} />}
+                            <div style={{position:'absolute',inset:0,background:'linear-gradient(to top,rgba(0,0,0,0.35),transparent 60%)',zIndex:1,pointerEvents:'none'}}/>
+                            {item.tag==='hot' && <span className="tag hot" style={{zIndex:3}}>🔥 Mais pedido</span>}
+                            {item.tag==='new' && <span className="tag new" style={{zIndex:3}}>✨ Novidade</span>}
+                            {item.social && <span className="social" style={{zIndex:3}}>{item.social}</span>}
+                            <span className="in-cart-flag" style={{zIndex:4}}>{q}</span>
                           </div>
                           <div className="card-body">
                             <h3>{item.name}</h3>
