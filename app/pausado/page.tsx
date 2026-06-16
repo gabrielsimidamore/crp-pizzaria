@@ -1,33 +1,28 @@
-export default function PausadoPage({
+export default async function PausadoPage({
   searchParams,
 }: {
-  searchParams: { slug?: string }
+  searchParams: Promise<{ slug?: string }>
 }) {
+  const { slug } = await searchParams
   return (
-    <div className="min-h-screen bg-[#F3E3DD] flex items-center justify-center p-6">
-      <div className="max-w-sm w-full text-center">
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/60">
-          <div className="text-6xl mb-4">😴</div>
-          <h1 className="font-serif font-black text-2xl text-[#5a3c33] mb-2">
-            Cardápio temporariamente indisponível
-          </h1>
-          <p className="text-[#8D6E63] text-sm leading-relaxed mb-6">
+    <div style={{ minHeight: '100vh', background: '#F3E3DD', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: 'system-ui, sans-serif' }}>
+      <div style={{ maxWidth: 380, width: '100%', textAlign: 'center' }}>
+        <div style={{ background: 'rgba(255,255,255,0.85)', borderRadius: 24, padding: 32, boxShadow: '0 16px 48px rgba(80,40,20,0.15)' }}>
+          <div style={{ fontSize: 56, marginBottom: 16 }}>😴</div>
+          <h1 style={{ fontWeight: 900, fontSize: 24, color: '#5a3c33', marginBottom: 8 }}>Cardápio temporariamente indisponível</h1>
+          <p style={{ color: '#8D6E63', fontSize: 14, lineHeight: 1.5, marginBottom: 24 }}>
             Este cardápio está pausado no momento. Se você é o dono da pizzaria, regularize sua assinatura para reativar.
           </p>
-          <div className="bg-[#FDECEA] border border-[#E74C3C]/30 rounded-2xl p-4 text-left">
-            <p className="text-xs font-bold text-[#C0392B] uppercase tracking-wider mb-1">Para reativar</p>
-            <p className="text-sm text-[#5a3c33]">
-              Entre em contato com o suporte e regularize seu pagamento. O cardápio será reativado automaticamente.
+          <div style={{ background: '#FDECEA', border: '1px solid rgba(231,76,60,0.3)', borderRadius: 16, padding: 16, textAlign: 'left' }}>
+            <p style={{ fontSize: 11, fontWeight: 700, color: '#C0392B', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Para reativar</p>
+            <p style={{ fontSize: 14, color: '#5a3c33', margin: 0 }}>
+              Regularize seu pagamento. O cardápio será reativado automaticamente.
             </p>
           </div>
-          {searchParams.slug && (
-            <p className="text-xs text-[#8D6E63] mt-4 font-mono">
-              Cardápio: {searchParams.slug}
-            </p>
-          )}
+          {slug && <p style={{ fontSize: 12, color: '#8D6E63', marginTop: 16, fontFamily: 'monospace' }}>Cardápio: {slug}</p>}
         </div>
-        <p className="text-xs text-[#8D6E63] mt-4">
-          Powered by <span className="font-bold text-[#E8432A]">Pizzo</span> · Cardápio Digital para Pizzarias
+        <p style={{ fontSize: 12, color: '#8D6E63', marginTop: 16 }}>
+          Powered by <span style={{ fontWeight: 700, color: '#E8432A' }}>Pizzo</span>
         </p>
       </div>
     </div>
