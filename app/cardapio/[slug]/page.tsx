@@ -1,15 +1,16 @@
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import CardapioClient from './CardapioClient'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const fetchCache = 'force-no-store'
 
 async function getPizzeria(slug: string) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-  // Se não tiver as variáveis, mostra o cardápio mesmo assim (modo demo)
   if (!supabaseUrl || !serviceKey) {
-    console.log('AVISO: Variáveis Supabase não configuradas - modo demo')
     return { slug, name: 'Pizzo', status: 'active', paid_until: '2099-01-01', wa_number: '5511980794899', phone: '', address: 'Delivery', delivery_fee: 5 }
   }
 
@@ -20,44 +21,36 @@ async function getPizzeria(slug: string) {
         headers: {
           apikey: serviceKey,
           Authorization: `Bearer ${serviceKey}`,
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+          Pragma: 'no-cache',
         },
         cache: 'no-store',
+        next: { revalidate: 0 },
       }
     )
-
-    console.log('Supabase status:', res.status, 'slug:', slug)
-
-    if (!res.ok) {
-      const text = await res.text()
-      console.log('Supabase error:', text)
-      return null
-    }
-
+    if (!res.ok) return null
     const rows = await res.json()
-    console.log('Pizzeria found:', rows?.[0]?.slug ?? 'nenhuma')
     return rows?.[0] ?? null
-  } catch (err) {
-    console.log('Fetch error:', err)
+  } catch {
     return null
   }
 }
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  // Força leitura dos headers para garantir execução dinâmica
+  await headers()
+
   const { slug } = await params
   const pizzeria = await getPizzeria(slug)
 
-  if (!pizzeria) {
-    redirect(`/pausado?slug=${slug}`)
-  }
+  if (!pizzeria) redirect(`/pausado?slug=${slug}`)
 
   const isActive = pizzeria.status === 'active'
   const isPaidValid = pizzeria.paid_until
     ? new Date(pizzeria.paid_until) >= new Date()
     : false
 
-  if (!isActive || !isPaidValid) {
-    redirect(`/pausado?slug=${slug}`)
-  }
+  if (!isActive || !isPaidValid) redirect(`/pausado?slug=${slug}`)
 
   return <CardapioClient pizzeria={pizzeria} />
 }
