@@ -1,25 +1,23 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createBrowserClient } from '@/lib/supabase'
-import type { Pizzeria, MenuItem } from '@/types'
+import { supabaseQuery } from '@/lib/supabase'
 
-// ─── Dados do cardápio padrão (override por pizzeria no Supabase) ─────────────
-const DEFAULT_MENU: Omit<MenuItem, 'id' | 'pizzeria_id' | 'active' | 'sort_order'>[] = [
-  { cat: 'salgadas', emoji: '🍕', img_url: null, name: 'Calabresa', desc: 'Calabresa fatiada, cebola e azeitonas sobre molho de tomate', price: 45, tag: 'hot', social: '🔥 Mais pedida' },
-  { cat: 'salgadas', emoji: '🍗', img_url: null, name: 'Frango c/ Catupiry', desc: 'Frango desfiado temperado e catupiry original cremoso', price: 48, tag: null, social: '❤️ Favorita da casa' },
-  { cat: 'salgadas', emoji: '🍕', img_url: null, name: 'Portuguesa', desc: 'Presunto, ovo, cebola, pimentão e azeitona', price: 47, tag: 'hot', social: '🔥 31 pedidos hoje' },
-  { cat: 'salgadas', emoji: '🧀', img_url: null, name: 'Quatro Queijos', desc: 'Mussarela, parmesão, catupiry e cheddar derretidos', price: 52, tag: null, social: null },
-  { cat: 'salgadas', emoji: '🍅', img_url: null, name: 'Margherita', desc: 'Molho de tomate fresco, mussarela e manjericão', price: 42, tag: null, social: null },
-  { cat: 'salgadas', emoji: '🥓', img_url: null, name: 'Frango c/ Bacon', desc: 'Frango, bacon crocante e cream cheese', price: 50, tag: 'new', social: null },
-  { cat: 'doces', emoji: '🍓', img_url: null, name: 'Chocolate c/ Morango', desc: 'Chocolate ao leite cremoso e morangos frescos', price: 48, tag: 'hot', social: '🔥 Mais pedida nas doces' },
-  { cat: 'doces', emoji: '🍫', img_url: null, name: 'Brigadeiro', desc: 'Brigadeiro gourmet, granulado belga e leite condensado', price: 46, tag: null, social: null },
-  { cat: 'doces', emoji: '🍌', img_url: null, name: 'Banana c/ Canela', desc: 'Banana caramelizada, canela e leite condensado', price: 44, tag: null, social: null },
-  { cat: 'lanches', emoji: '🍔', img_url: null, name: 'X-Bacon Especial', desc: 'Hambúrguer artesanal, bacon crocante, queijo e alface', price: 28, tag: 'hot', social: '🔥 Top dos lanches' },
-  { cat: 'lanches', emoji: '🍗', img_url: null, name: 'X-Frango', desc: 'Frango empanado sequinho, queijo e maionese da casa', price: 25, tag: null, social: null },
-  { cat: 'bebidas', emoji: '🥤', img_url: null, name: 'Refrigerante Lata', desc: 'Coca-Cola, Guaraná ou Sprite geladíssimos', price: 6, tag: null, social: null },
-  { cat: 'bebidas', emoji: '🥤', img_url: null, name: 'Refrigerante 2L', desc: 'Coca-Cola ou Guaraná para toda a família', price: 12, tag: null, social: null },
-  { cat: 'bebidas', emoji: '💧', img_url: null, name: 'Água Mineral', desc: '500ml com ou sem gás', price: 4, tag: null, social: null },
+const DEFAULT_MENU = [
+  { id: 's1', cat: 'salgadas', emoji: '🍕', name: 'Calabresa', desc: 'Calabresa fatiada, cebola e azeitonas sobre molho de tomate', price: 45, tag: 'hot', social: '🔥 Mais pedida' },
+  { id: 's2', cat: 'salgadas', emoji: '🍗', name: 'Frango c/ Catupiry', desc: 'Frango desfiado temperado e catupiry original cremoso', price: 48, tag: null, social: '❤️ Favorita da casa' },
+  { id: 's3', cat: 'salgadas', emoji: '🍕', name: 'Portuguesa', desc: 'Presunto, ovo, cebola, pimentão e azeitona', price: 47, tag: 'hot', social: '🔥 31 pedidos hoje' },
+  { id: 's4', cat: 'salgadas', emoji: '🧀', name: 'Quatro Queijos', desc: 'Mussarela, parmesão, catupiry e cheddar derretidos', price: 52, tag: null, social: null },
+  { id: 's5', cat: 'salgadas', emoji: '🍅', name: 'Margherita', desc: 'Molho de tomate fresco, mussarela e manjericão', price: 42, tag: null, social: null },
+  { id: 's6', cat: 'salgadas', emoji: '🥓', name: 'Frango c/ Bacon', desc: 'Frango, bacon crocante e cream cheese', price: 50, tag: 'new', social: null },
+  { id: 'd1', cat: 'doces', emoji: '🍓', name: 'Chocolate c/ Morango', desc: 'Chocolate ao leite cremoso e morangos frescos', price: 48, tag: 'hot', social: '🔥 Mais pedida nas doces' },
+  { id: 'd2', cat: 'doces', emoji: '🍫', name: 'Brigadeiro', desc: 'Brigadeiro gourmet, granulado belga e leite condensado', price: 46, tag: null, social: null },
+  { id: 'd3', cat: 'doces', emoji: '🍌', name: 'Banana c/ Canela', desc: 'Banana caramelizada, canela e leite condensado', price: 44, tag: null, social: null },
+  { id: 'l1', cat: 'lanches', emoji: '🍔', name: 'X-Bacon Especial', desc: 'Hambúrguer artesanal, bacon crocante, queijo e alface', price: 28, tag: 'hot', social: '🔥 Top dos lanches' },
+  { id: 'l2', cat: 'lanches', emoji: '🍗', name: 'X-Frango', desc: 'Frango empanado sequinho, queijo e maionese da casa', price: 25, tag: null, social: null },
+  { id: 'b1', cat: 'bebidas', emoji: '🥤', name: 'Refrigerante Lata', desc: 'Coca-Cola, Guaraná ou Sprite geladíssimos', price: 6, tag: null, social: null },
+  { id: 'b2', cat: 'bebidas', emoji: '🥤', name: 'Refrigerante 2L', desc: 'Coca-Cola ou Guaraná para toda a família', price: 12, tag: null, social: null },
+  { id: 'b3', cat: 'bebidas', emoji: '💧', name: 'Água Mineral', desc: '500ml com ou sem gás', price: 4, tag: null, social: null },
 ]
 
 const CAT_LABELS: Record<string, string> = {
@@ -28,26 +26,20 @@ const CAT_LABELS: Record<string, string> = {
   lanches: '🍔 Lanches',
   bebidas: '🥤 Bebidas',
 }
-
 const CAT_ORDER = ['salgadas', 'doces', 'lanches', 'bebidas']
 const BRL = (n: number) => 'R$ ' + n.toFixed(2).replace('.', ',')
 
-interface CartEntry {
-  id: string
-  name: string
-  price: number
-  emoji: string
-  qty: number
-}
+type MenuItem = typeof DEFAULT_MENU[0]
+type CartEntry = { id: string; name: string; price: number; emoji: string; qty: number }
 
 export default function CardapioPage({ params }: { params: { slug: string } }) {
-  const [pizzeria, setPizzeria] = useState<Pizzeria | null>(null)
-  const [menu, setMenu] = useState<typeof DEFAULT_MENU>(DEFAULT_MENU)
+  const [pizzeria, setPizzeria] = useState<Record<string, string> | null>(null)
+  const [menu, setMenu] = useState<MenuItem[]>(DEFAULT_MENU)
   const [cart, setCart] = useState<CartEntry[]>([])
   const [activeCat, setActiveCat] = useState('all')
   const [query, setQuery] = useState('')
   const [cartOpen, setCartOpen] = useState(false)
-  const [name, setName] = useState('')
+  const [nome, setNome] = useState('')
   const [addr, setAddr] = useState('')
   const [pay, setPay] = useState('')
   const [obs, setObs] = useState('')
@@ -56,24 +48,8 @@ export default function CardapioPage({ params }: { params: { slug: string } }) {
 
   useEffect(() => {
     async function load() {
-      const supabase = createBrowserClient()
-      const { data } = await supabase
-        .from('pizzerias')
-        .select('*')
-        .eq('slug', params.slug)
-        .single()
-
-      if (data) {
-        setPizzeria(data)
-        // Tenta carregar menu customizado da pizzaria
-        const { data: items } = await supabase
-          .from('menu_items')
-          .select('*')
-          .eq('pizzeria_id', data.id)
-          .eq('active', true)
-          .order('sort_order')
-        if (items && items.length > 0) setMenu(items)
-      }
+      const data = await supabaseQuery('pizzerias', `slug=eq.${params.slug}&limit=1`)
+      if (data?.[0]) setPizzeria(data[0])
       setLoading(false)
     }
     load()
@@ -84,37 +60,35 @@ export default function CardapioPage({ params }: { params: { slug: string } }) {
     setTimeout(() => setToast(''), 2200)
   }
 
-  function addToCart(item: typeof DEFAULT_MENU[0] & { id?: string }) {
+  function addToCart(item: MenuItem) {
     setCart(prev => {
-      const key = item.name
-      const exists = prev.find(e => e.id === key)
-      if (exists) return prev.map(e => e.id === key ? { ...e, qty: e.qty + 1 } : e)
-      return [...prev, { id: key, name: item.name, price: item.price, emoji: item.emoji, qty: 1 }]
+      const exists = prev.find(e => e.id === item.id)
+      if (exists) return prev.map(e => e.id === item.id ? { ...e, qty: e.qty + 1 } : e)
+      return [...prev, { id: item.id, name: item.name, price: item.price, emoji: item.emoji, qty: 1 }]
     })
     showToast(`${item.name} adicionado ✅`)
   }
 
-  function decCart(name: string) {
+  function decCart(id: string) {
     setCart(prev => {
-      const entry = prev.find(e => e.id === name)
+      const entry = prev.find(e => e.id === id)
       if (!entry) return prev
-      if (entry.qty <= 1) return prev.filter(e => e.id !== name)
-      return prev.map(e => e.id === name ? { ...e, qty: e.qty - 1 } : e)
+      if (entry.qty <= 1) return prev.filter(e => e.id !== id)
+      return prev.map(e => e.id === id ? { ...e, qty: e.qty - 1 } : e)
     })
   }
 
   const totalQty = cart.reduce((a, e) => a + e.qty, 0)
   const subtotal = cart.reduce((a, e) => a + e.price * e.qty, 0)
-  const delivery = pizzeria?.delivery_fee ?? 5
+  const delivery = Number(pizzeria?.delivery_fee ?? 5)
   const total = subtotal + delivery
-
   const waNumber = pizzeria?.wa_number ?? '5511980794899'
 
   function sendWhatsApp() {
     if (!cart.length) return
     const NL = '\n'
     let msg = `*Novo Pedido — ${pizzeria?.name ?? 'Pizzaria'}* 🍕${NL}${NL}`
-    if (name) msg += `Cliente: ${name}${NL}`
+    if (nome) msg += `Cliente: ${nome}${NL}`
     if (addr) msg += `Entrega: ${addr}${NL}`
     if (pay) msg += `Pagamento: ${pay}${NL}`
     msg += `${NL}*Itens:*${NL}`
@@ -126,154 +100,128 @@ export default function CardapioPage({ params }: { params: { slug: string } }) {
 
   const filteredMenu = menu.filter(item =>
     (activeCat === 'all' || item.cat === activeCat) &&
-    (!query || item.name.toLowerCase().includes(query.toLowerCase()) || item.desc.toLowerCase().includes(query.toLowerCase()))
+    (!query || item.name.toLowerCase().includes(query.toLowerCase()))
   )
-
-  const isOpen = () => {
-    const h = new Date().getHours()
-    const open = pizzeria?.open_hour ?? 18
-    const close = pizzeria?.close_hour ?? 24
-    return close > open ? (h >= open && h < close) : (h >= open || h < close % 24)
-  }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F3E3DD] flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-5xl mb-4 animate-bounce">🍕</div>
-          <p className="text-[#5a3c33] font-semibold">Carregando cardápio...</p>
+      <div style={{ minHeight: '100vh', background: '#F3E3DD', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 56, marginBottom: 16 }}>🍕</div>
+          <p style={{ color: '#5a3c33', fontWeight: 600 }}>Carregando cardápio...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#F3E3DD] font-sans">
+    <div style={{ minHeight: '100vh', background: '#F3E3DD', fontFamily: 'system-ui, sans-serif' }}>
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-[rgba(28,16,10,0.92)] text-white text-sm font-semibold px-4 py-3 rounded-xl shadow-lg animate-fade-in">
+        <div style={{ position: 'fixed', bottom: 90, left: '50%', transform: 'translateX(-50%)', background: 'rgba(28,16,10,0.92)', color: '#fff', padding: '12px 20px', borderRadius: 12, zIndex: 999, fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap' }}>
           {toast}
         </div>
       )}
 
       {/* Header */}
-      <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-white/60 shadow-sm px-4 py-3 flex items-center gap-3">
-        <div className="w-12 h-12 rounded-full overflow-hidden bg-[#0d0d0d] shadow-lg flex-shrink-0">
-          {pizzeria?.logo_url
-            ? <img src={pizzeria.logo_url} alt={pizzeria?.name} className="w-full h-full object-cover" />
-            : <div className="w-full h-full flex items-center justify-center text-2xl">🍕</div>
-          }
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="font-serif font-black text-xl text-[#5a3c33]">{pizzeria?.name ?? 'Pizzo'}</h1>
-            <span className="text-xs font-black bg-gradient-to-r from-[#F5A623] to-[#E8432A] text-white px-2 py-0.5 rounded-md">CARDÁPIO DIGITAL</span>
+      <header style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(12px)', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}>
+        <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#0d0d0d', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}>🍕</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <h1 style={{ margin: 0, fontSize: 18, fontWeight: 900, color: '#5a3c33' }}>{pizzeria?.name ?? 'Pizzo'}</h1>
+            <span style={{ fontSize: 10, fontWeight: 800, background: 'linear-gradient(120deg,#F5A623,#E8432A)', color: '#fff', padding: '2px 8px', borderRadius: 6 }}>CARDÁPIO DIGITAL</span>
           </div>
-          <div className="text-xs text-[#8D6E63] mt-0.5">
-            🛵 {pizzeria?.address ?? 'Delivery'} · 📱 {pizzeria?.phone ?? ''}
-          </div>
-        </div>
-        <div className={`flex items-center gap-2 text-xs font-bold px-3 py-2 rounded-full border ${isOpen() ? 'bg-[#EAFAF1] border-[#27AE60] text-[#27AE60]' : 'bg-[#FDECEA] border-[#E74C3C] text-[#C0392B]'}`}>
-          <span className={`w-2 h-2 rounded-full ${isOpen() ? 'bg-[#27AE60] animate-pulse' : 'bg-[#E74C3C]'}`} />
-          {isOpen() ? `⏰ Aberto até ${String((pizzeria?.close_hour ?? 24) % 24).padStart(2, '0')}h` : `😴 Fechado`}
+          <div style={{ fontSize: 12, color: '#8D6E63', marginTop: 2 }}>🛵 {pizzeria?.address ?? 'Delivery'} · 📱 {pizzeria?.phone ?? ''}</div>
         </div>
       </header>
 
       {/* Hero */}
-      <div className="mx-4 mt-4 rounded-2xl overflow-hidden relative min-h-[180px] flex flex-col justify-end p-5"
-        style={{ background: 'linear-gradient(115deg, #C0341D 0%, #E8432A 55%, #F5A623 100%)' }}>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        <div className="relative z-10 text-white">
-          <span className="inline-flex items-center gap-2 bg-black/40 border border-white/30 text-xs font-bold px-3 py-1.5 rounded-full mb-3">
-            <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse shadow-[0_0_8px_#ff4d4d]" />
+      <div style={{ margin: '12px 16px', borderRadius: 20, overflow: 'hidden', minHeight: 160, background: 'linear-gradient(115deg,#C0341D,#E8432A 55%,#F5A623)', padding: '20px 20px 16px', position: 'relative', boxShadow: '0 12px 36px rgba(214,48,49,0.3)' }}>
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.5), transparent 60%)' }} />
+        <div style={{ position: 'relative', zIndex: 1, color: '#fff' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.3)', padding: '5px 12px', borderRadius: 99, fontSize: 11, fontWeight: 700, marginBottom: 10 }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ff4d4d', boxShadow: '0 0 8px #ff4d4d' }} />
             AO VIVO DO FORNO
-          </span>
-          <h2 className="font-serif font-black text-2xl leading-tight">Massa fininha, borda dourada, queijo escorrendo. 🔥</h2>
-          <p className="text-sm text-white/90 mt-1">Assada na hora. Peça agora e receba quentinha.</p>
-          <div className="flex gap-2 mt-3 flex-wrap">
-            {['🛵 Entrega ~40min', '🔥 Forno quente agora', '⭐ 4,9 de avaliação'].map(p => (
-              <span key={p} className="text-xs font-bold bg-white/15 border border-white/30 backdrop-blur-sm px-3 py-1.5 rounded-full">{p}</span>
+          </div>
+          <h2 style={{ margin: 0, fontSize: 'clamp(16px,5vw,24px)', fontWeight: 900, lineHeight: 1.2 }}>Massa fininha, borda dourada, queijo escorrendo. 🔥</h2>
+          <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+            {['🛵 Entrega ~40min', '🔥 Forno quente', '⭐ 4,9'].map(p => (
+              <span key={p} style={{ fontSize: 12, fontWeight: 700, background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', padding: '6px 12px', borderRadius: 99 }}>{p}</span>
             ))}
           </div>
         </div>
       </div>
 
       {/* Filtros */}
-      <div className="sticky top-[73px] z-10 bg-[#F3E3DD]/90 backdrop-blur-md px-4 py-3 flex gap-2 overflow-x-auto scrollbar-hide">
+      <div style={{ display: 'flex', gap: 8, padding: '8px 16px', overflowX: 'auto', position: 'sticky', top: 73, zIndex: 10, background: 'rgba(243,227,221,0.9)', backdropFilter: 'blur(8px)' }}>
         {[{ id: 'all', label: '🍽️ Tudo' }, { id: 'salgadas', label: '🍕 Salgadas' }, { id: 'doces', label: '🍫 Doces' }, { id: 'lanches', label: '🍔 Lanches' }, { id: 'bebidas', label: '🥤 Bebidas' }].map(c => (
-          <button key={c.id} onClick={() => setActiveCat(c.id)}
-            className={`flex-shrink-0 text-sm font-bold px-4 py-2 rounded-full border transition-all ${activeCat === c.id ? 'bg-[#E8432A] text-white border-[#E8432A] shadow-lg' : 'bg-white/70 text-[#5a3c33] border-white/80'}`}>
+          <button key={c.id} onClick={() => setActiveCat(c.id)} style={{ flexShrink: 0, fontSize: 13, fontWeight: 700, padding: '8px 16px', borderRadius: 99, border: 'none', cursor: 'pointer', background: activeCat === c.id ? '#E8432A' : 'rgba(255,255,255,0.8)', color: activeCat === c.id ? '#fff' : '#5a3c33', transition: 'all .15s' }}>
             {c.label}
           </button>
         ))}
-        <input
-          type="text" placeholder="🔍 Buscar..." value={query} onChange={e => setQuery(e.target.value)}
-          className="flex-shrink-0 ml-2 bg-white/70 border border-white/80 rounded-full px-4 py-2 text-sm text-[#5a3c33] outline-none focus:border-[#E8432A] w-40"
-        />
+        <input type="text" placeholder="🔍 Buscar..." value={query} onChange={e => setQuery(e.target.value)}
+          style={{ flexShrink: 0, marginLeft: 8, background: 'rgba(255,255,255,0.8)', border: 'none', borderRadius: 99, padding: '8px 16px', fontSize: 13, color: '#5a3c33', width: 140, outline: 'none' }} />
       </div>
 
       {/* Menu */}
-      <div className="px-4 pb-32 mt-4 space-y-6">
+      <div style={{ padding: '12px 16px 120px' }}>
         {CAT_ORDER.map(catId => {
           const items = filteredMenu.filter(i => i.cat === catId)
           if (!items.length) return null
           return (
-            <div key={catId}>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="w-1 h-6 rounded-full bg-gradient-to-b from-[#E8432A] to-[#F5A623]" />
-                <h2 className="font-serif font-black text-lg text-[#5a3c33]">{CAT_LABELS[catId]}</h2>
-                <span className="text-xs text-[#8D6E63]">· {items.length} {items.length === 1 ? 'item' : 'itens'}</span>
+            <div key={catId} style={{ marginBottom: 24 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                <span style={{ width: 4, height: 24, borderRadius: 2, background: 'linear-gradient(#E8432A,#F5A623)', flexShrink: 0 }} />
+                <h2 style={{ margin: 0, fontSize: 18, fontWeight: 900, color: '#5a3c33' }}>{CAT_LABELS[catId]}</h2>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                {items.map((item, i) => (
-                  <div key={i} onClick={() => addToCart(item)}
-                    className="bg-white/70 backdrop-blur-sm border border-white/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer active:scale-95">
-                    <div className="h-28 bg-gradient-to-br from-[#FFECD2] to-[#FCB69F] flex items-center justify-center text-4xl relative">
-                      {item.img_url && <img src={item.img_url} alt={item.name} className="absolute inset-0 w-full h-full object-cover" />}
-                      <span className="relative z-10">{item.emoji}</span>
-                      {item.tag === 'hot' && <span className="absolute top-2 left-2 bg-[#E8432A] text-white text-[10px] font-black px-2 py-0.5 rounded-lg z-20">🔥 Mais pedido</span>}
-                      {item.tag === 'new' && <span className="absolute top-2 left-2 bg-[#8B5CF6] text-white text-[10px] font-black px-2 py-0.5 rounded-lg z-20">✨ Novidade</span>}
-                      {item.social && <span className="absolute bottom-2 left-2 right-2 bg-black/50 text-white text-[10px] font-semibold px-2 py-1 rounded-lg z-20 truncate">{item.social}</span>}
-                      {(() => { const q = cart.find(e => e.id === item.name)?.qty; return q ? <span className="absolute top-2 right-2 bg-[#00B894] text-white text-xs font-black w-6 h-6 rounded-full flex items-center justify-center z-20">{q}</span> : null })()}
-                    </div>
-                    <div className="p-3">
-                      <h3 className="font-serif font-bold text-[#5a3c33] text-sm leading-tight">{item.name}</h3>
-                      <p className="text-xs text-[#8D6E63] mt-1 line-clamp-2 leading-relaxed">{item.desc}</p>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="font-serif font-black text-[#E8432A] text-base">{BRL(item.price)}</span>
-                        <button className="w-8 h-8 rounded-full bg-gradient-to-br from-[#F5A623] to-[#E8432A] text-white font-bold text-lg flex items-center justify-center shadow-md hover:scale-110 transition-transform">+</button>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12 }}>
+                {items.map(item => {
+                  const inCart = cart.find(e => e.id === item.id)
+                  return (
+                    <div key={item.id} onClick={() => addToCart(item)} style={{ background: 'rgba(255,255,255,0.85)', borderRadius: 16, overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.08)', cursor: 'pointer', transition: 'transform .15s', position: 'relative' }}>
+                      <div style={{ height: 110, background: 'linear-gradient(135deg,#FFECD2,#FCB69F)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, position: 'relative' }}>
+                        {item.emoji}
+                        {item.tag === 'hot' && <span style={{ position: 'absolute', top: 8, left: 8, background: '#E8432A', color: '#fff', fontSize: 10, fontWeight: 800, padding: '2px 8px', borderRadius: 8 }}>🔥 Mais pedido</span>}
+                        {item.tag === 'new' && <span style={{ position: 'absolute', top: 8, left: 8, background: '#8B5CF6', color: '#fff', fontSize: 10, fontWeight: 800, padding: '2px 8px', borderRadius: 8 }}>✨ Novidade</span>}
+                        {inCart && <span style={{ position: 'absolute', top: 8, right: 8, background: '#00B894', color: '#fff', fontSize: 12, fontWeight: 800, width: 24, height: 24, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inCart.qty}</span>}
+                      </div>
+                      <div style={{ padding: '10px 12px 12px' }}>
+                        <div style={{ fontWeight: 700, fontSize: 14, color: '#5a3c33', lineHeight: 1.2 }}>{item.name}</div>
+                        <div style={{ fontSize: 11, color: '#8D6E63', marginTop: 4, lineHeight: 1.4, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{item.desc}</div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 }}>
+                          <span style={{ fontWeight: 900, fontSize: 17, color: '#E8432A' }}>{BRL(item.price)}</span>
+                          <button style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#F5A623,#E8432A)', color: '#fff', border: 'none', fontSize: 20, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(232,67,42,0.4)' }}>+</button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           )
         })}
-
         {!filteredMenu.length && (
-          <div className="text-center py-16 text-[#8D6E63]">
-            <div className="text-5xl mb-3 opacity-30">🔍</div>
-            <p>Nenhum item encontrado.<br />Tente outra busca ou categoria.</p>
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#8D6E63' }}>
+            <div style={{ fontSize: 48, opacity: 0.3, marginBottom: 12 }}>🔍</div>
+            <p>Nenhum item encontrado.</p>
           </div>
         )}
       </div>
 
-      {/* Bottom bar mobile */}
+      {/* Bottom bar */}
       {totalQty > 0 && !cartOpen && (
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#f0e8e0] px-4 py-3 pb-safe flex items-center gap-3 shadow-xl">
-          <div className="flex items-center gap-3 flex-1">
-            <div className="relative w-11 h-11 rounded-xl bg-[#E8432A] flex items-center justify-center flex-shrink-0">
-              <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6" stroke="white" strokeWidth="2"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-              <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">{totalQty}</span>
+        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 40, background: '#fff', borderTop: '1px solid #f0e8e0', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 -4px 20px rgba(0,0,0,0.1)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
+            <div style={{ position: 'relative', width: 44, height: 44, borderRadius: 12, background: '#E8432A', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>
+              🛒
+              <span style={{ position: 'absolute', top: -6, right: -6, background: '#ff6b00', color: '#fff', fontSize: 10, fontWeight: 800, width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #fff' }}>{totalQty}</span>
             </div>
             <div>
-              <div className="text-xs text-gray-400">{totalQty} {totalQty === 1 ? 'item' : 'itens'}</div>
-              <div className="font-serif font-black text-[#1a1a1a] text-lg leading-none">{BRL(total)}</div>
+              <div style={{ fontSize: 12, color: '#888' }}>{totalQty} {totalQty === 1 ? 'item' : 'itens'}</div>
+              <div style={{ fontWeight: 900, fontSize: 18, color: '#1a1a1a' }}>{BRL(total)}</div>
             </div>
           </div>
-          <button onClick={() => setCartOpen(true)}
-            className="bg-[#E8432A] text-white font-bold text-sm px-5 py-3.5 rounded-xl flex-shrink-0 shadow-lg active:scale-95 transition-transform">
+          <button onClick={() => setCartOpen(true)} style={{ background: '#E8432A', color: '#fff', fontWeight: 700, fontSize: 14, border: 'none', borderRadius: 12, padding: '14px 20px', cursor: 'pointer', flexShrink: 0 }}>
             Ver pedido
           </button>
         </div>
@@ -281,85 +229,71 @@ export default function CardapioPage({ params }: { params: { slug: string } }) {
 
       {/* Cart screen */}
       {cartOpen && (
-        <div className="fixed inset-0 z-50 bg-[#f5f0eb] flex flex-col">
-          <div className="bg-white px-4 pt-safe pb-3 border-b border-[#f0e8e0] flex items-center gap-3">
-            <button onClick={() => setCartOpen(false)} className="w-9 h-9 rounded-full bg-[#f5f0eb] flex items-center justify-center flex-shrink-0">
-              <svg width="20" height="20" fill="none" stroke="#333" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-            </button>
-            <h2 className="font-serif font-black text-xl text-[#1a1a1a] flex-1">Seu Pedido</h2>
-            <span className="bg-[#E8432A] text-white text-xs font-bold px-3 py-1 rounded-full">{totalQty}</span>
+        <div style={{ position: 'fixed', inset: 0, zIndex: 50, background: '#f5f0eb', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ background: '#fff', padding: '14px 16px', borderBottom: '1px solid #f0e8e0', display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button onClick={() => setCartOpen(false)} style={{ width: 36, height: 36, borderRadius: '50%', background: '#f5f0eb', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>←</button>
+            <h2 style={{ margin: 0, fontWeight: 900, fontSize: 20, color: '#1a1a1a', flex: 1 }}>Seu Pedido</h2>
+            <span style={{ background: '#E8432A', color: '#fff', fontSize: 12, fontWeight: 700, padding: '3px 10px', borderRadius: 99 }}>{totalQty}</span>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px' }}>
             {/* Itens */}
-            {cart.length > 0 && (
-              <div className="bg-white rounded-2xl divide-y divide-[#f5f0eb]">
-                {cart.map(entry => (
-                  <div key={entry.id} className="flex items-center gap-3 p-4">
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => decCart(entry.id)} className="w-8 h-8 rounded-full border-2 border-[#E8432A] text-[#E8432A] font-bold text-lg flex items-center justify-center">−</button>
-                      <span className="font-serif font-black text-base w-5 text-center">{entry.qty}</span>
-                      <button onClick={() => addToCart({ ...entry, cat: 'salgadas', desc: '', tag: null, social: null, img_url: null })} className="w-8 h-8 rounded-full bg-[#E8432A] text-white font-bold text-lg flex items-center justify-center">+</button>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-semibold text-[#1a1a1a] truncate">{entry.emoji} {entry.name}</div>
-                      <div className="text-xs text-gray-400">{BRL(entry.price)} cada</div>
-                    </div>
-                    <div className="font-serif font-bold text-[#1a1a1a]">{BRL(entry.price * entry.qty)}</div>
+            <div style={{ background: '#fff', borderRadius: 16, marginBottom: 12 }}>
+              {cart.map(entry => (
+                <div key={entry.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', borderBottom: '1px solid #f5f0eb' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <button onClick={() => decCart(entry.id)} style={{ width: 30, height: 30, borderRadius: '50%', border: '1.5px solid #E8432A', background: '#fff', color: '#E8432A', fontSize: 18, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
+                    <span style={{ fontWeight: 800, fontSize: 16, minWidth: 20, textAlign: 'center' }}>{entry.qty}</span>
+                    <button onClick={() => addToCart(DEFAULT_MENU.find(m => m.id === entry.id)!)} style={{ width: 30, height: 30, borderRadius: '50%', border: 'none', background: '#E8432A', color: '#fff', fontSize: 18, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
                   </div>
-                ))}
-              </div>
-            )}
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: '#1a1a1a' }}>{entry.emoji} {entry.name}</div>
+                    <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>{BRL(entry.price)} cada</div>
+                  </div>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: '#1a1a1a' }}>{BRL(entry.price * entry.qty)}</div>
+                </div>
+              ))}
+            </div>
 
             {/* Resumo */}
-            <div className="bg-white rounded-2xl p-4 space-y-2">
-              <div className="flex justify-between text-sm text-gray-500"><span>Subtotal</span><span>{BRL(subtotal)}</span></div>
-              <div className="flex justify-between text-sm text-gray-500"><span>Taxa de entrega</span><span>{BRL(delivery)}</span></div>
-              <div className="flex justify-between text-base font-bold text-[#1a1a1a] pt-2 border-t border-dashed border-[#e0d8d0]">
+            <div style={{ background: '#fff', borderRadius: 16, padding: 16, marginBottom: 12 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#666', marginBottom: 8 }}><span>Subtotal</span><span>{BRL(subtotal)}</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#666', marginBottom: 8 }}><span>Taxa de entrega</span><span>{BRL(delivery)}</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 16, fontWeight: 700, color: '#1a1a1a', paddingTop: 12, borderTop: '1px dashed #e0d8d0' }}>
                 <span>Total</span>
-                <span className="font-serif font-black text-2xl text-[#E8432A]">{BRL(total)}</span>
+                <span style={{ fontWeight: 900, fontSize: 22, color: '#E8432A' }}>{BRL(total)}</span>
               </div>
             </div>
 
             {/* Checkout */}
-            <div className="bg-white rounded-2xl p-4 space-y-3">
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-wider text-gray-400 block mb-1.5">Seu nome</label>
-                <input value={name} onChange={e => setName(e.target.value)} type="text" placeholder="Como podemos te chamar?"
-                  className="w-full bg-[#faf5f0] border border-[#e0d8d0] rounded-xl px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#E8432A]" />
-              </div>
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-wider text-gray-400 block mb-1.5">Endereço de entrega</label>
-                <input value={addr} onChange={e => setAddr(e.target.value)} type="text" placeholder="Rua, número, bairro..."
-                  className="w-full bg-[#faf5f0] border border-[#e0d8d0] rounded-xl px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#E8432A]" />
-              </div>
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-wider text-gray-400 block mb-1.5">Pagamento</label>
-                <div className="flex gap-2">
+            <div style={{ background: '#fff', borderRadius: 16, padding: 16 }}>
+              {[
+                { label: 'Seu nome', val: nome, set: setNome, placeholder: 'Como podemos te chamar?' },
+                { label: 'Endereço de entrega', val: addr, set: setAddr, placeholder: 'Rua, número, bairro...' },
+                { label: 'Observações (opcional)', val: obs, set: setObs, placeholder: 'Sem cebola, borda recheada...' },
+              ].map(f => (
+                <div key={f.label} style={{ marginBottom: 12 }}>
+                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888', display: 'block', marginBottom: 6 }}>{f.label}</label>
+                  <input value={f.val} onChange={e => f.set(e.target.value)} placeholder={f.placeholder}
+                    style={{ width: '100%', background: '#faf5f0', border: '1.5px solid #e0d8d0', borderRadius: 10, padding: '10px 14px', fontSize: 14, color: '#1a1a1a', outline: 'none', boxSizing: 'border-box' }} />
+                </div>
+              ))}
+              <div style={{ marginBottom: 12 }}>
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888', display: 'block', marginBottom: 6 }}>Pagamento</label>
+                <div style={{ display: 'flex', gap: 8 }}>
                   {['💠 Pix', '💳 Cartão', '💵 Dinheiro'].map(p => (
-                    <button key={p} onClick={() => setPay(p)}
-                      className={`flex-1 text-xs font-bold py-2 rounded-xl border transition-all ${pay === p ? 'bg-[#E8432A] text-white border-[#E8432A]' : 'bg-[#faf5f0] text-gray-500 border-[#e0d8d0]'}`}>
-                      {p}
-                    </button>
+                    <button key={p} onClick={() => setPay(p)} style={{ flex: 1, fontSize: 12, fontWeight: 700, padding: '9px 4px', borderRadius: 10, border: pay === p ? 'none' : '1.5px solid #e0d8d0', background: pay === p ? '#E8432A' : '#faf5f0', color: pay === p ? '#fff' : '#555', cursor: 'pointer' }}>{p}</button>
                   ))}
                 </div>
-              </div>
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-wider text-gray-400 block mb-1.5">Observações (opcional)</label>
-                <input value={obs} onChange={e => setObs(e.target.value)} type="text" placeholder="Sem cebola, borda recheada..."
-                  className="w-full bg-[#faf5f0] border border-[#e0d8d0] rounded-xl px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#E8432A]" />
               </div>
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="bg-white px-4 py-3 pb-safe border-t border-[#f0e8e0]">
-            <button onClick={sendWhatsApp} disabled={!cart.length}
-              className="w-full bg-[#25D366] text-white font-bold text-base py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg disabled:opacity-40 active:scale-95 transition-transform">
-              <svg width="22" height="22" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-              Enviar pedido no WhatsApp
+          <div style={{ background: '#fff', padding: '12px 16px', borderTop: '1px solid #f0e8e0' }}>
+            <button onClick={sendWhatsApp} disabled={!cart.length} style={{ width: '100%', background: '#25D366', color: '#fff', fontWeight: 700, fontSize: 15, border: 'none', borderRadius: 14, padding: '16px 20px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <span>💬</span> Enviar pedido no WhatsApp
             </button>
-            <button onClick={() => { setCart([]); setCartOpen(false) }} className="w-full text-center text-xs text-gray-400 mt-2 py-1">
+            <button onClick={() => { setCart([]); setCartOpen(false) }} style={{ width: '100%', textAlign: 'center', fontSize: 13, color: '#aaa', background: 'none', border: 'none', cursor: 'pointer', marginTop: 8, padding: 4 }}>
               Limpar carrinho
             </button>
           </div>
