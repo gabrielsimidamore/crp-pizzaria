@@ -10,7 +10,7 @@ async function getPizzeria(slug: string) {
   // Se não tiver as variáveis, mostra o cardápio mesmo assim (modo demo)
   if (!supabaseUrl || !serviceKey) {
     console.log('AVISO: Variáveis Supabase não configuradas - modo demo')
-    return { slug, name: 'Pizzo Demo', status: 'active', paid_until: '2099-01-01', wa_number: '5511980794899', phone: '', address: 'Delivery', delivery_fee: 5 }
+    return { slug, name: 'Pizzo', status: 'active', paid_until: '2099-01-01', wa_number: '5511980794899', phone: '', address: 'Delivery', delivery_fee: 5 }
   }
 
   try {
