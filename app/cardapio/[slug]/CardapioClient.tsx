@@ -344,7 +344,7 @@ export default function CardapioClient({ pizzeria }: { pizzeria: Record<string,s
   // ── CSS ──────────────────────────────────────────────────────────────────────
   const css = `
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,800;9..144,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-:root{--red:#E8432A;--red-deep:#C0341D;--orange:#F5A623;--brand-grad:linear-gradient(120deg,#F5A623 0%,#E8432A 100%);--yellow:#FDCB6E;--green:#00B894;--green-badge:#27AE60;--brown:#5a3c33;--brown-mid:#8D6E63;}
+:root{--red:#1A1A1A;--red-deep:#000000;--orange:#FF7A1A;--brand-grad:linear-gradient(120deg,#FF7A1A 0%,#1A1A1A 100%);--yellow:#FFB347;--green:#00B894;--green-badge:#27AE60;--brown:#1A1A1A;--brown-mid:#555555;}
 *{box-sizing:border-box;margin:0;padding:0;}html,body{height:100%;}
 body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--brown);background-color:#F5E8D6;line-height:1.45;overflow-x:hidden;font-size:15px;}
 .serif{font-family:'Fraunces',Georgia,serif;}
@@ -388,9 +388,24 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--brown);bac
 .coupon-text strong{font-size:14px;font-weight:800;}
 .coupon-text span{font-size:12.5px;color:rgba(255,255,255,.72);}
 .coupon-code-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
-.coupon-label{font-size:12px;font-weight:800;color:#FFC857;}
+.coupon-label{font-size:12px;font-weight:800;color:var(--orange);}
 .coupon-code{font-family:monospace;font-size:14px;font-weight:800;letter-spacing:1.5px;border:1.5px dashed rgba(255,255,255,.5);border-radius:8px;padding:3px 10px;background:rgba(255,255,255,.06);}
 @media(max-width:600px){.coupon-bar{margin:12px 16px 0;padding:12px 14px;}.coupon-text span{display:none;}}
+.vendidos-list{display:flex;flex-direction:column;gap:12px;}
+.vlist-card{display:flex;gap:14px;background:#fff;border:1px solid #ececec;border-radius:16px;padding:12px;cursor:pointer;transition:box-shadow .2s,border-color .2s;}
+.vlist-card:hover{box-shadow:0 8px 22px rgba(0,0,0,.08);border-color:#e0e0e0;}
+.vlist-card.has-qty{border-color:var(--orange);}
+.vlist-img{position:relative;flex-shrink:0;width:96px;height:96px;border-radius:12px;overflow:hidden;background:#1A1A1A;display:flex;align-items:center;justify-content:center;}
+.vlist-img .emoji{font-size:30px;position:relative;z-index:0;}
+.vlist-img .tag{position:absolute;top:5px;left:5px;font-size:9.5px;font-weight:800;padding:3px 6px;border-radius:6px;z-index:3;color:#fff;}
+.vlist-img .tag.hot{background:var(--orange);}
+.vlist-img .tag.new{background:#1A1A1A;}
+.vlist-info{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:3px;}
+.vlist-info h3{font-size:15px;font-weight:800;color:#1A1A1A;margin:0;}
+.vlist-info p{font-size:12.5px;color:#666;line-height:1.35;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.vlist-social{font-size:11px;font-weight:700;color:var(--orange);}
+.vlist-foot{display:flex;align-items:center;justify-content:space-between;margin-top:4px;}
+.vlist-qty{font-size:12px;font-weight:700;color:var(--orange);}
 .toolbar{position:sticky;top:92px;z-index:10;background:rgba(255,251,247,.88);backdrop-filter:blur(16px);padding:12px 28px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,220,200,.3);}
 .cats{display:flex;gap:8px;overflow-x:auto;flex:1;scrollbar-width:none;}
 .cats::-webkit-scrollbar{display:none;}
@@ -733,24 +748,27 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--brown);bac
             {isVendidos && filteredMenu.length>0 && (
               <div>
                 <div className="section-head"><span className="bar"/><h2>⭐ Mais Vendidos</h2><span className="count">· {filteredMenu.length} {filteredMenu.length===1?'item':'itens'}</span></div>
-                <div className="grid">
+                <div className="vendidos-list">
                   {filteredMenu.map(item=>{
                     const q=qtyOfId(item.id)
                     return (
-                      <div key={item.id} className={`card${q>0?' has-qty':''}`} onClick={()=>isPizza(item)?openProduct(item):(addEntry({id:item.id,borda:null,extras:[],mode:'normal'}),showToast(`${item.name} adicionado ✅`))}>
-                        <div className="card-img">
+                      <div key={item.id} className={`vlist-card${q>0?' has-qty':''}`} onClick={()=>isPizza(item)?openProduct(item):(addEntry({id:item.id,borda:null,extras:[],mode:'normal'}),showToast(`${item.name} adicionado ✅`))}>
+                        <div className="vlist-img">
                           <span className="emoji">{item.emoji}</span>
                           {item.img&&<img src={item.img} alt={item.name} style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',zIndex:0}} loading="lazy" onError={e=>{(e.target as HTMLImageElement).style.display='none'}}/>}
-                          <div style={{position:'absolute',inset:0,background:'linear-gradient(to top,rgba(0,0,0,.35),transparent 60%)',zIndex:1,pointerEvents:'none'}}/>
                           {item.tag==='hot'&&<span className="tag hot" style={{zIndex:3}}>🔥 Mais pedido</span>}
                           {item.tag==='new'&&<span className="tag new" style={{zIndex:3}}>✨ Novidade</span>}
-                          {item.social&&<span className="social" style={{zIndex:3}}>{item.social}</span>}
-                          <span className="in-cart-flag" style={{zIndex:4}}>{q}</span>
                         </div>
-                        <div className="card-body"><h3>{item.name}</h3><p>{item.desc}</p></div>
-                        <div className="card-foot">
-                          <div className="price"><small>R$</small> {item.price.toFixed(2).replace('.',',')}</div>
-                          <button className="add-btn" onClick={e=>{e.stopPropagation();isPizza(item)?openProduct(item):(addEntry({id:item.id,borda:null,extras:[],mode:'normal'}),showToast(`${item.name} adicionado ✅`))}}>+</button>
+                        <div className="vlist-info">
+                          <h3>{item.name}</h3>
+                          <p>{item.desc}</p>
+                          {item.social&&<span className="vlist-social">{item.social}</span>}
+                          <div className="vlist-foot">
+                            <div className="price"><small>R$</small> {item.price.toFixed(2).replace('.',',')}</div>
+                            {q>0
+                              ? <span className="vlist-qty">{q} no carrinho</span>
+                              : <button className="add-btn" onClick={e=>{e.stopPropagation();isPizza(item)?openProduct(item):(addEntry({id:item.id,borda:null,extras:[],mode:'normal'}),showToast(`${item.name} adicionado ✅`))}}>+</button>}
+                          </div>
                         </div>
                       </div>
                     )
