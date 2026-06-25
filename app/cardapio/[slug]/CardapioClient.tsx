@@ -58,11 +58,13 @@ const PIZZAS_SALGADAS = MENU.filter(m => m.cat === 'salgadas')
 const PIZZAS_DOCES    = MENU.filter(m => m.cat === 'doces')
 
 const CATS = [
-  { id:'all',      label:'🍽️ Tudo' },
+  { id:'vendidos', label:'⭐ Mais Vendidos' },
+  { id:'promos',   label:'🔥 Promoções' },
+  { id:'combos',   label:'🎁 Combos' },
+  { id:'bebidas',  label:'🥤 Bebidas' },
   { id:'salgadas', label:'🍕 Salgadas' },
   { id:'doces',    label:'🍫 Doces' },
   { id:'lanches',  label:'🍔 Lanches' },
-  { id:'bebidas',  label:'🥤 Bebidas' },
 ]
 const CAT_LABEL: Record<string,string> = { salgadas:'🍕 Pizzas Salgadas', doces:'🍫 Pizzas Doces', lanches:'🍔 Lanches', bebidas:'🥤 Bebidas' }
 const ORDER_CATS = ['salgadas','doces','lanches','bebidas']
@@ -102,10 +104,10 @@ const EXTRAS: Record<string,{id:string;name:string;price:number}[]> = {
 }
 
 const PROMOS = [
-  { id:'p1', name:'Combo Casal',      desc:'1 Pizza Grande + 2 Refri Lata — noite perfeita a dois',  items:['s1','b1','b1'],       price:52 },
-  { id:'p2', name:'Sexta da Família', desc:'2 Pizzas Salgadas + Refri 2L — ninguém passa fome',      items:['s3','s4','b2'],       price:99 },
-  { id:'p3', name:'Doce Encontro',    desc:'1 Salgada + 1 Doce — do salgado ao docinho',             items:['s5','d1'],            price:79 },
-  { id:'p4', name:'Combo Lanche',     desc:'2 X-Bacon + 2 Refri Lata — a pedida da galera',          items:['l1','l1','b1','b1'], price:62 },
+  { id:'p1', name:'Combo Casal',      desc:'1 Pizza Grande + 2 Refri Lata — noite perfeita a dois',  items:['s1','b1','b1'],       price:52, group:'combos' as const },
+  { id:'p2', name:'Sexta da Família', desc:'2 Pizzas Salgadas + Refri 2L — ninguém passa fome',      items:['s3','s4','b2'],       price:99, group:'combos' as const },
+  { id:'p3', name:'Doce Encontro',    desc:'1 Salgada + 1 Doce — do salgado ao docinho',             items:['s5','d1'],            price:79, group:'promos' as const },
+  { id:'p4', name:'Combo Lanche',     desc:'2 X-Bacon + 2 Refri Lata — a pedida da galera',          items:['l1','l1','b1','b1'], price:62, group:'combos' as const },
 ]
 
 const menuById  = (id:string) => MENU.find(m=>m.id===id)
@@ -196,7 +198,7 @@ function optionsLabel(e: CartEntry): string {
 // ── Componente principal ──────────────────────────────────────────────────────
 export default function CardapioClient({ pizzeria }: { pizzeria: Record<string,string|number|null> }) {
   const [cart,       setCart]       = useState<Cart>({})
-  const [activeCat,  setActiveCat]  = useState('all')
+  const [activeCat,  setActiveCat]  = useState('vendidos')
   const [query,      setQuery]      = useState('')
   const [cartOpen,   setCartOpen]   = useState(false)
   const [nome,       setNome]       = useState('')
@@ -332,8 +334,10 @@ export default function CardapioClient({ pizzeria }: { pizzeria: Record<string,s
     window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(buildMsg())}`,'_blank')
   }
 
-  const showPromos    = activeCat==='all'&&!query.trim()
-  const filteredMenu  = MENU.filter(i=>(activeCat==='all'||i.cat===activeCat)&&(!query||i.name.toLowerCase().includes(query.toLowerCase())||i.desc.toLowerCase().includes(query.toLowerCase())))
+  const showPromoGroup = (activeCat==='promos'||activeCat==='combos') && !query.trim()
+  const visiblePromos  = PROMOS.filter(p=>p.group===activeCat)
+  const isVendidos      = activeCat==='vendidos'
+  const filteredMenu  = MENU.filter(i=>((isVendidos?i.tag==='hot':i.cat===activeCat))&&(!query||i.name.toLowerCase().includes(query.toLowerCase())||i.desc.toLowerCase().includes(query.toLowerCase())))
   const isPizza       = (item:MenuItem) => item.cat==='salgadas'||item.cat==='doces'
   const meioPizzas    = meioCat==='salgadas' ? PIZZAS_SALGADAS : PIZZAS_DOCES
 
@@ -378,6 +382,15 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--brown);bac
 .hero .pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(8px);padding:8px 13px;border-radius:999px;font-size:12.5px;font-weight:700;white-space:nowrap;}
 .hero .live-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.3);backdrop-filter:blur(6px);padding:6px 11px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.3px;margin-bottom:10px;}
 .hero .live-tag .rec{width:8px;height:8px;border-radius:50%;background:#ff4d4d;box-shadow:0 0 8px #ff4d4d;animation:pulse 1.4s infinite;}
+.coupon-bar{margin:14px 28px 0;border-radius:16px;background:#1c0f08;color:#fff;display:flex;align-items:center;gap:14px;padding:14px 18px;box-shadow:0 8px 22px rgba(0,0,0,.18);}
+.coupon-icon{font-size:24px;flex-shrink:0;}
+.coupon-text{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;}
+.coupon-text strong{font-size:14px;font-weight:800;}
+.coupon-text span{font-size:12.5px;color:rgba(255,255,255,.72);}
+.coupon-code-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.coupon-label{font-size:12px;font-weight:800;color:#FFC857;}
+.coupon-code{font-family:monospace;font-size:14px;font-weight:800;letter-spacing:1.5px;border:1.5px dashed rgba(255,255,255,.5);border-radius:8px;padding:3px 10px;background:rgba(255,255,255,.06);}
+@media(max-width:600px){.coupon-bar{margin:12px 16px 0;padding:12px 14px;}.coupon-text span{display:none;}}
 .toolbar{position:sticky;top:92px;z-index:10;background:rgba(255,251,247,.88);backdrop-filter:blur(16px);padding:12px 28px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,220,200,.3);}
 .cats{display:flex;gap:8px;overflow-x:auto;flex:1;scrollbar-width:none;}
 .cats::-webkit-scrollbar{display:none;}
@@ -655,6 +668,19 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--brown);bac
             </div>
           </div>
 
+          {/* Cupom de desconto */}
+          <div className="coupon-bar">
+            <div className="coupon-icon">🏷️</div>
+            <div className="coupon-text">
+              <strong>Primeira compra?</strong>
+              <span>Use o cupom abaixo e ganhe desconto</span>
+            </div>
+            <div className="coupon-code-wrap">
+              <span className="coupon-label">10% OFF</span>
+              <span className="coupon-code">PIZZO10</span>
+            </div>
+          </div>
+
           {/* Toolbar */}
           <div className="toolbar">
             <div className="cats">
@@ -667,7 +693,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--brown);bac
 
           <div className="main-inner">
             {/* Botão meio a meio */}
-            {(activeCat==='all'||activeCat==='salgadas'||activeCat==='doces') && !query && (
+            {(activeCat==='vendidos'||activeCat==='salgadas'||activeCat==='doces') && !query && (
               <button className="meio-btn" onClick={openMeio}>
                 <div className="meio-icon">🍕</div>
                 <div className="meio-btn-text">
@@ -678,12 +704,12 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--brown);bac
               </button>
             )}
 
-            {/* Promos */}
-            {showPromos && (
+            {/* Promos / Combos */}
+            {showPromoGroup && (
               <div className="promo-wrap">
-                <div className="promo-head"><span className="bar"/><h2>🔥 Promoções da Semana</h2><span className="sub">· toque para adicionar o combo</span></div>
+                <div className="promo-head"><span className="bar"/><h2>{activeCat==='combos'?'🎁 Combos':'🔥 Promoções da Semana'}</h2><span className="sub">· toque para adicionar</span></div>
                 <div className="promo-row">
-                  {PROMOS.map(p=>{
+                  {visiblePromos.map(p=>{
                     const full=p.items.reduce((s,id)=>s+(menuById(id)?.price??0),0)
                     const off=Math.round((1-p.price/full)*100)
                     return (
@@ -695,6 +721,36 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--brown);bac
                             <div><div className="pold">{off>0?BRL(full):''}</div><div className="pnew"><small>R$</small> {p.price.toFixed(2).replace('.',',')}</div></div>
                             <button className="padd" onClick={e=>{e.stopPropagation();addEntry({id:p.id,borda:null,extras:[],mode:'normal'});showToast(`${p.name} adicionado ✅`)}}>+ Adicionar</button>
                           </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Mais Vendidos */}
+            {isVendidos && filteredMenu.length>0 && (
+              <div>
+                <div className="section-head"><span className="bar"/><h2>⭐ Mais Vendidos</h2><span className="count">· {filteredMenu.length} {filteredMenu.length===1?'item':'itens'}</span></div>
+                <div className="grid">
+                  {filteredMenu.map(item=>{
+                    const q=qtyOfId(item.id)
+                    return (
+                      <div key={item.id} className={`card${q>0?' has-qty':''}`} onClick={()=>isPizza(item)?openProduct(item):(addEntry({id:item.id,borda:null,extras:[],mode:'normal'}),showToast(`${item.name} adicionado ✅`))}>
+                        <div className="card-img">
+                          <span className="emoji">{item.emoji}</span>
+                          {item.img&&<img src={item.img} alt={item.name} style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',zIndex:0}} loading="lazy" onError={e=>{(e.target as HTMLImageElement).style.display='none'}}/>}
+                          <div style={{position:'absolute',inset:0,background:'linear-gradient(to top,rgba(0,0,0,.35),transparent 60%)',zIndex:1,pointerEvents:'none'}}/>
+                          {item.tag==='hot'&&<span className="tag hot" style={{zIndex:3}}>🔥 Mais pedido</span>}
+                          {item.tag==='new'&&<span className="tag new" style={{zIndex:3}}>✨ Novidade</span>}
+                          {item.social&&<span className="social" style={{zIndex:3}}>{item.social}</span>}
+                          <span className="in-cart-flag" style={{zIndex:4}}>{q}</span>
+                        </div>
+                        <div className="card-body"><h3>{item.name}</h3><p>{item.desc}</p></div>
+                        <div className="card-foot">
+                          <div className="price"><small>R$</small> {item.price.toFixed(2).replace('.',',')}</div>
+                          <button className="add-btn" onClick={e=>{e.stopPropagation();isPizza(item)?openProduct(item):(addEntry({id:item.id,borda:null,extras:[],mode:'normal'}),showToast(`${item.name} adicionado ✅`))}}>+</button>
                         </div>
                       </div>
                     )
