@@ -831,24 +831,27 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--brown);b
               return (
                 <div key={catId}>
                   <div className="section-head"><span className="bar"/><h2>{CAT_LABEL[catId]}</h2><span className="count">· {items.length} {items.length===1?'item':'itens'}</span></div>
-                  <div className="grid">
+                  <div className="vendidos-list">
                     {items.map(item=>{
                       const q=qtyOfId(item.id)
                       return (
-                        <div key={item.id} className={`card${q>0?' has-qty':''}`} onClick={()=>isPizza(item)?openProduct(item):(addEntry({id:item.id,borda:null,extras:[],mode:'normal'}),showToast(`${item.name} adicionado ✅`))}>
-                          <div className="card-img">
+                        <div key={item.id} className={`vlist-card${q>0?' has-qty':''}`} onClick={()=>isPizza(item)?openProduct(item):(addEntry({id:item.id,borda:null,extras:[],mode:'normal'}),showToast(`${item.name} adicionado ✅`))}>
+                          <div className="vlist-img">
                             <span className="emoji">{item.emoji}</span>
                             {item.img&&<img src={item.img} alt={item.name} style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',zIndex:0}} loading="lazy" onError={e=>{(e.target as HTMLImageElement).style.display='none'}}/>}
-                            <div style={{position:'absolute',inset:0,background:'linear-gradient(to top,rgba(0,0,0,.35),transparent 60%)',zIndex:1,pointerEvents:'none'}}/>
                             {item.tag==='hot'&&<span className="tag hot" style={{zIndex:3}}>🔥 Mais pedido</span>}
                             {item.tag==='new'&&<span className="tag new" style={{zIndex:3}}>✨ Novidade</span>}
-                            {item.social&&<span className="social" style={{zIndex:3}}>{item.social}</span>}
-                            <span className="in-cart-flag" style={{zIndex:4}}>{q}</span>
                           </div>
-                          <div className="card-body"><h3>{item.name}</h3><p>{item.desc}</p></div>
-                          <div className="card-foot">
-                            <div className="price"><small>R$</small> {item.price.toFixed(2).replace('.',',')}</div>
-                            <button className="add-btn" onClick={e=>{e.stopPropagation();isPizza(item)?openProduct(item):(addEntry({id:item.id,borda:null,extras:[],mode:'normal'}),showToast(`${item.name} adicionado ✅`))}}>+</button>
+                          <div className="vlist-info">
+                            <h3>{item.name}</h3>
+                            <p>{item.desc}</p>
+                            {item.social&&<span className="vlist-social">{item.social}</span>}
+                            <div className="vlist-foot">
+                              <div className="price"><small>R$</small> {item.price.toFixed(2).replace('.',',')}</div>
+                              {q>0
+                                ? <span className="vlist-qty">{q} no carrinho</span>
+                                : <button className="add-btn" onClick={e=>{e.stopPropagation();isPizza(item)?openProduct(item):(addEntry({id:item.id,borda:null,extras:[],mode:'normal'}),showToast(`${item.name} adicionado ✅`))}}>+</button>}
+                            </div>
                           </div>
                         </div>
                       )
