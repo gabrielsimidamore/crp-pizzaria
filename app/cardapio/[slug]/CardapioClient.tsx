@@ -71,6 +71,12 @@ const ORDER_CATS = ['salgadas','doces','lanches','bebidas']
 const BUMP_IDS   = ['b1','b2','b3','d1']
 const DELIVERY   = 5
 
+const COUPONS: Record<string,{type:'percent'|'fixed';value:number;label:string}> = {
+  PIZZO10:   { type:'percent', value:10, label:'10% OFF' },
+  FRETEGRATIS:{ type:'fixed',  value:0,  label:'Frete grátis' },
+  BEMVINDO15:{ type:'percent', value:15, label:'15% OFF na 1ª compra' },
+}
+
 const BORDAS = [
   { id:'catupiry', name:'Borda de Catupiry', price:10 },
   { id:'cheddar',  name:'Borda de Cheddar',  price:10 },
@@ -208,6 +214,8 @@ export default function CardapioClient({ pizzeria }: { pizzeria: Record<string,s
   const [obs,        setObs]        = useState('')
   const [toast,      setToast]      = useState('')
   const [isOpenNow,  setIsOpenNow]  = useState(true)
+  const [coupon,     setCoupon]     = useState<string|null>(null)
+  const [couponInput,setCouponInput]= useState('')
   const toastTimer = useRef<ReturnType<typeof setTimeout>|null>(null)
 
   // Modal modo: 'product' = pizza normal, 'meio' = meio a meio step 1/2
@@ -249,7 +257,26 @@ export default function CardapioClient({ pizzeria }: { pizzeria: Record<string,s
   const totalQty  = () => Object.values(cart).reduce((a,e)=>a+e.qty,0)
   const qtyOfId   = (id:string) => Object.values(cart).reduce((s,e)=>s+(e.id===id||e.id2===id?e.qty:0),0)
   const subtotal  = entries().reduce((s,{e})=>s+unitPrice(e)*e.qty,0)
-  const total     = subtotal + deliveryFee
+  const appliedCoupon = coupon ? COUPONS[coupon] : null
+  const discount  = !appliedCoupon ? 0
+    : appliedCoupon.type==='percent' ? subtotal*(appliedCoupon.value/100)
+    : appliedCoupon.value
+  const freteGratis = coupon==='FRETEGRATIS'
+  const frete     = freteGratis ? 0 : deliveryFee
+  const total     = Math.max(0, subtotal - discount) + frete
+
+  function applyCoupon(codeRaw:string){
+    const code = codeRaw.trim().toUpperCase()
+    if(!code){ return }
+    if(COUPONS[code]){ setCoupon(code); setCouponInput(''); showToast(`Cupom ${code} aplicado ✅`) }
+    else { showToast('Cupom inválido ❌') }
+  }
+  function copyCoupon(code:string){
+    navigator.clipboard?.writeText(code).then(()=>{
+      setCoupon(code)
+      showToast(`Cupom ${code} copiado e aplicado ✅`)
+    }).catch(()=>{ setCoupon(code); showToast(`Cupom ${code} aplicado ✅`) })
+  }
 
   function addEntry(entry: Omit<CartEntry,'qty'>, qty=1) {
     const k = keyOf(entry)
@@ -325,7 +352,9 @@ export default function CardapioClient({ pizzeria }: { pizzeria: Record<string,s
       const opts=optionsLabel(e); if(opts) msg+=`   (${opts})${NL}`
     })
     if(obs) msg+=`${NL}Obs: ${obs}${NL}`
-    msg+=`${NL}Subtotal: ${BRL(subtotal)}${NL}Entrega: ${BRL(deliveryFee)}${NL}*TOTAL: ${BRL(total)}*${NL}${NL}Aguardo confirmação, obrigado!`
+    msg+=`${NL}Subtotal: ${BRL(subtotal)}${NL}`
+    if(appliedCoupon) msg+=`Cupom ${coupon}: -${BRL(discount)}${NL}`
+    msg+=`Entrega: ${freteGratis?'Grátis':BRL(frete)}${NL}*TOTAL: ${BRL(total)}*${NL}${NL}Aguardo confirmação, obrigado!`
     return msg
   }
   function sendWA() {
@@ -378,7 +407,8 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--brown);b
 .hero .pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(8px);padding:7px 12px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap;}
 .hero .live-tag{display:inline-flex;align-items:center;gap:6px;background:var(--orange);padding:5px 11px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.3px;margin-bottom:8px;}
 .hero .live-tag .rec{width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 8px #fff;animation:pulse 1.4s infinite;}
-.coupon-bar{margin:14px 28px 0;border-radius:14px;background:#FFF4EC;border:1px solid #FFE0CC;color:#1A1A1A;display:flex;align-items:center;gap:14px;padding:13px 16px;}
+.coupon-bar{margin:14px 28px 0;border-radius:14px;background:#FFF4EC;border:1px solid #FFE0CC;color:#1A1A1A;display:flex;align-items:center;gap:14px;padding:13px 16px;cursor:pointer;transition:background .15s;}
+.coupon-bar:hover{background:#FFEEDF;}
 .coupon-icon{font-size:22px;flex-shrink:0;}
 .coupon-text{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;}
 .coupon-text strong{font-size:14px;font-weight:800;}
@@ -491,6 +521,17 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--brown);b
 .bump-card .bprice{font-family:'Inter',sans-serif;font-weight:700;font-size:13px;color:var(--red);}
 .bump-card .badd{width:22px;height:22px;border-radius:50%;background:var(--red);color:#fff;border:none;font-size:15px;line-height:1;display:grid;place-items:center;cursor:pointer;}
 .order-foot{border-top:1px solid rgba(255,200,150,.16);padding:14px 24px 18px;background:rgba(18,11,7,.5);overflow-y:auto;max-height:62vh;flex-shrink:0;}
+.coupon-field{margin-bottom:14px;}
+.coupon-input-row{display:flex;gap:8px;}
+.coupon-inp{flex:1;background:rgba(255,255,255,.08);border:1px dashed rgba(255,200,150,.4);border-radius:10px;padding:10px 12px;font-size:13px;color:#FFF1E0;font-family:inherit;outline:none;text-transform:uppercase;}
+.coupon-inp::placeholder{color:rgba(255,225,190,.45);text-transform:none;}
+.coupon-inp:focus{border-color:var(--orange);}
+.coupon-apply{background:var(--orange);color:#fff;border:none;border-radius:10px;padding:0 16px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;transition:background .15s;}
+.coupon-apply:hover{background:var(--orange-deep);}
+.coupon-applied{display:flex;align-items:center;gap:10px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.4);border-radius:10px;padding:10px 12px;}
+.coupon-applied .ca-tag{font-size:13px;font-weight:800;color:#FFF1E0;}
+.coupon-applied .ca-label{flex:1;font-size:12px;color:#34D399;font-weight:700;}
+.coupon-applied .ca-remove{background:none;border:none;color:rgba(255,225,190,.6);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline;}
 .srow{display:flex;justify-content:space-between;font-size:13px;color:rgba(255,225,190,.62);margin-bottom:8px;}
 .srow .v{color:#FFF1E0;font-weight:600;}
 .srow.total{margin-top:12px;padding-top:13px;border-top:1px dashed rgba(255,200,150,.16);align-items:baseline;color:#FFF1E0;font-size:15px;font-weight:700;}
@@ -554,6 +595,15 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--brown);b
   .cs-bump-price{font-family:'Inter',sans-serif;font-weight:700;font-size:13px;color:var(--red);}
   .cs-bump-add{width:24px;height:24px;border-radius:50%;background:var(--red);color:#fff;border:none;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
   .cs-summary{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;}
+  .cs-coupon{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:12px;}
+  .cs-coupon .coupon-input-row{display:flex;gap:8px;}
+  .cs-coupon .coupon-inp{flex:1;background:#FAF7F4;border:1px dashed var(--orange);border-radius:10px;padding:11px 13px;font-size:14px;color:#1a1a1a;font-family:inherit;outline:none;text-transform:uppercase;}
+  .cs-coupon .coupon-inp::placeholder{color:#aaa;text-transform:none;}
+  .cs-coupon .coupon-apply{background:var(--orange);color:#fff;border:none;border-radius:10px;padding:0 18px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;}
+  .cs-coupon .coupon-applied{display:flex;align-items:center;gap:10px;background:#ECFDF5;border:1px solid #A7F3D0;border-radius:10px;padding:11px 13px;}
+  .cs-coupon .coupon-applied .ca-tag{font-size:13px;font-weight:800;color:#1a1a1a;}
+  .cs-coupon .coupon-applied .ca-label{flex:1;font-size:12.5px;color:#16A34A;font-weight:700;}
+  .cs-coupon .coupon-applied .ca-remove{background:none;border:none;color:#999;font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline;}
   .cs-srow{display:flex;justify-content:space-between;font-size:14px;color:#666;margin-bottom:10px;}
   .cs-srow.total{margin-top:12px;padding-top:12px;border-top:1px dashed #e0d8d0;color:#1a1a1a;font-weight:700;font-size:15px;margin-bottom:0;}
   .cs-srow.total .tv{font-family:'Inter',sans-serif;font-size:22px;font-weight:800;color:var(--red);}
@@ -681,15 +731,15 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--brown);b
           </div>
 
           {/* Cupom de desconto */}
-          <div className="coupon-bar">
+          <div className="coupon-bar" onClick={()=>copyCoupon('PIZZO10')} role="button">
             <div className="coupon-icon">🏷️</div>
             <div className="coupon-text">
-              <strong>Primeira compra?</strong>
-              <span>Use o cupom abaixo e ganhe desconto</span>
+              <strong>{coupon==='PIZZO10'?'Cupom aplicado!':'Primeira compra?'}</strong>
+              <span>{coupon==='PIZZO10'?'PIZZO10 · 10% de desconto ativo':'Toque para copiar e aplicar'}</span>
             </div>
             <div className="coupon-code-wrap">
               <span className="coupon-label">10% OFF</span>
-              <span className="coupon-code">PIZZO10</span>
+              <span className="coupon-code">{coupon==='PIZZO10'?'✓ PIZZO10':'PIZZO10'}</span>
             </div>
           </div>
 
@@ -842,8 +892,23 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--brown);b
             </div>
           )}
           <div className="order-foot">
+            <div className="coupon-field">
+              {appliedCoupon ? (
+                <div className="coupon-applied">
+                  <span className="ca-tag">🏷️ {coupon}</span>
+                  <span className="ca-label">{appliedCoupon.label}</span>
+                  <button className="ca-remove" onClick={()=>{setCoupon(null);showToast('Cupom removido')}}>remover</button>
+                </div>
+              ) : (
+                <div className="coupon-input-row">
+                  <input className="coupon-inp" type="text" placeholder="Inserir cupom de desconto" value={couponInput} onChange={e=>setCouponInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')applyCoupon(couponInput)}}/>
+                  <button className="coupon-apply" onClick={()=>applyCoupon(couponInput)}>Aplicar</button>
+                </div>
+              )}
+            </div>
             <div className="srow"><span>Subtotal</span><span className="v">{BRL(subtotal)}</span></div>
-            <div className="srow"><span>Entrega</span><span className="v">{BRL(deliveryFee)}</span></div>
+            {discount>0&&<div className="srow"><span>Desconto ({coupon})</span><span className="v" style={{color:'#34D399'}}>− {BRL(discount)}</span></div>}
+            <div className="srow"><span>Entrega</span><span className="v">{freteGratis?'Grátis':BRL(frete)}</span></div>
             <div className="srow total"><span>Total</span><span className="v">{BRL(total)}</span></div>
             {[{lbl:'Seu nome',val:nome,set:setNome,ph:'Como podemos te chamar?',type:'text'},{lbl:'Endereço de entrega',val:addr,set:setAddr,ph:'Rua, número, bairro...',type:'text'}].map(f=>(
               <div key={f.lbl} className="addr-wrap"><label className="addr-label">{f.lbl}</label><input className="addr-input" type={f.type} placeholder={f.ph} value={f.val} onChange={e=>f.set(e.target.value)}/></div>
@@ -906,9 +971,24 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--brown);b
               ))}
             </div></>
           )}
+          <div className="cs-coupon">
+            {appliedCoupon ? (
+              <div className="coupon-applied">
+                <span className="ca-tag">🏷️ {coupon}</span>
+                <span className="ca-label">{appliedCoupon.label}</span>
+                <button className="ca-remove" onClick={()=>{setCoupon(null);showToast('Cupom removido')}}>remover</button>
+              </div>
+            ) : (
+              <div className="coupon-input-row">
+                <input className="coupon-inp" type="text" placeholder="Inserir cupom de desconto" value={couponInput} onChange={e=>setCouponInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')applyCoupon(couponInput)}}/>
+                <button className="coupon-apply" onClick={()=>applyCoupon(couponInput)}>Aplicar</button>
+              </div>
+            )}
+          </div>
           <div className="cs-summary">
             <div className="cs-srow"><span>Subtotal</span><span>{BRL(subtotal)}</span></div>
-            <div className="cs-srow"><span>Entrega</span><span>{BRL(deliveryFee)}</span></div>
+            {discount>0&&<div className="cs-srow"><span>Desconto ({coupon})</span><span style={{color:'#16A34A',fontWeight:700}}>− {BRL(discount)}</span></div>}
+            <div className="cs-srow"><span>Entrega</span><span>{freteGratis?'Grátis':BRL(frete)}</span></div>
             <div className="cs-srow total"><span>Total</span><span className="tv">{BRL(total)}</span></div>
           </div>
           <div className="cs-addr">
